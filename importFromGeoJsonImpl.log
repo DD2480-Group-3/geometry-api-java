@@ -6,7 +6,7 @@ Results :
 4 : true
 5 : true
 6 : true
-7 : false
+7 : true
 8 : true
 9 : false
 10 : true
@@ -48,4 +48,4 @@ Results :
 46 : true
 47 : true
 48 : true
-Coverage : 33 / 49, 67.34694 %
+Coverage : 34 / 49, 69.38776 %

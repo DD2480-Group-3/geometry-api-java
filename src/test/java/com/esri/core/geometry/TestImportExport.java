@@ -1530,18 +1530,18 @@ public class TestImportExport extends TestCase {
 
 		Polygon polygon;
 		String geoJsonString;
-		// Envelope2D envelope = new Envelope2D();
 
 		// Test Import from Polygon
 		try {
 			geoJsonString = "{\"type\":\"MultiPoint\",\"type\":\"Polygon\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]},{\"type\":\"MultiPoint\",\"type\":\"MultiPoint\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
 			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
-			assertNotNull(polygon);		
+			assertTrue(false);
 		} catch (Exception e) {
+			// TODO: handle exception
+
 			// e.printStackTrace();
 			// System.out.println(e.getMessage());
 			assertEquals(e.getMessage(),"parsing error");
-			// TODO: handle exception
 		}
 	}
 	@Test
@@ -1550,20 +1550,41 @@ public class TestImportExport extends TestCase {
 
 		Polygon polygon;
 		String geoJsonString;
-		// Envelope2D envelope = new Envelope2D();
 
 		// Test Import from Polygon
 		try {
 			geoJsonString = "{\"type\": 10;,\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]},{\"type\":\"MultiPoint\",\"type\":\"MultiPoint\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
 			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
-			assertNotNull(polygon);		
+			assertTrue(false);
 		} catch (Exception e) {
+			// TODO: handle exception
 			// e.printStackTrace();
 			// System.out.println(e.getMessage());
 			assertEquals(e.getMessage(),"parsing error");
-			// TODO: handle exception
 		}
 	}
+
+	@Test
+	public static void testImportGeoJsonException() throws Exception {
+		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
+
+		Polygon polygon;
+		String geoJsonString;
+
+		// Test Import from Polygon
+		try {
+			geoJsonString = "{\"type\": \"somethingRandom\";,\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]},{\"type\":\"MultiPoint\",\"type\":\"MultiPoint\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
+			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
+			assertTrue(false);	
+		} catch (Exception e) {
+			// TODO: handle exception
+			// e.printStackTrace();
+			// System.out.println(e.getMessage());
+			assertEquals(e.getMessage(),"somethingRandom");
+		}
+	}
+	
+	
 
 
 	@Test
