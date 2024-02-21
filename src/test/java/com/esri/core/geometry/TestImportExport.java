@@ -987,6 +987,95 @@ public class TestImportExport extends TestCase {
 		assertTrue(wkbType == WkbGeometryType.wkbPolygon);
 		polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
 		assertTrue(polygon.isEmpty());
+
+		
+	}
+
+	/**
+	 * Testing to export an empty envelope as a MultiPolygon. Since the envelope is empty, assertion will be true.
+	 */
+	@Test
+	public static void testCoverageForExportEnvelopeToWKB_1() {
+		OperatorExportToWkb exporterWKB = (OperatorExportToWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToWkb);
+		OperatorImportFromWkb importerWKB = (OperatorImportFromWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkb);
+
+		Envelope envelope = new Envelope();
+		ByteBuffer polygonWKBBuffer = exporterWKB.execute(WkbExportFlags.wkbExportMultiPolygon, envelope, null);
+		Polygon polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
+		assertTrue(polygon.isEmpty());
+	}
+	
+	/**
+	 * Testing to export a nonempty envelope which has M Semantic attribute.
+	 * First assertion is false because the envelope is not empty.
+	 * Second assertion is true because we set the envelope a PolygonM
+	 * Last one is true because the returned polygon has 4 points.
+	 */
+	@Test
+	public static void testCoverageForExportEnvelopeToWKB_2() {
+		OperatorExportToWkb exporterWKB = (OperatorExportToWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToWkb);
+		OperatorImportFromWkb importerWKB = (OperatorImportFromWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkb);
+
+		Envelope env1 = new Envelope(1,1, 2, 4);
+		env1.addAttribute(VertexDescription.Semantics.M);
+		Point p = new Point(100,4);
+		env1.merge(p);
+		
+		assertFalse(p.isEmpty());
+		 
+		ByteBuffer polygonWKBBuffer = exporterWKB.execute(WkbExportFlags.wkbExportPolygon, env1, null);
+		int wkbType = polygonWKBBuffer.getInt(1);
+		assertTrue(wkbType == WkbGeometryType.wkbPolygonM);
+		Polygon polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
+		int point_count = polygon.getPointCount();
+		assertTrue(point_count == 4);
+
+	}
+
+	/**
+	 * Testing to export an empty envelope with setting it's semantic attribute to be Z.
+	 * First assertion is true since this envelope's geometry type will be  MultiPolygonZ.
+	 * Second assertion is also true since the envelope is empty.
+	 */
+	@Test
+	public static void testCoverageForExportEnvelopeToWKB_3() {
+		OperatorExportToWkb exporterWKB = (OperatorExportToWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToWkb);
+		OperatorImportFromWkb importerWKB = (OperatorImportFromWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkb);
+
+		Envelope env1 = new Envelope();
+		env1.addAttribute(VertexDescription.Semantics.Z);
+		
+		ByteBuffer polygonWKBBuffer = exporterWKB.execute(WkbExportFlags.wkbExportPolygon, env1, null);
+		int wkbType = polygonWKBBuffer.getInt(1);
+		
+		assertTrue(wkbType == WkbGeometryType.wkbMultiPolygonZ);
+		Polygon polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
+		
+		assertTrue(polygon.isEmpty());
+
+	}
+
+	/**
+	 * Testing to exporting an empty envelope with semantic attributes Z and M
+	 * First assertion will be true since the envelope have both Z and M semantics.
+	 * Second assertion is also true since the envelope is empty.
+	 */
+	@Test
+	public static void testCoverageForExportEnvelopeToWKB_4() {
+		OperatorExportToWkb exporterWKB = (OperatorExportToWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToWkb);
+		OperatorImportFromWkb importerWKB = (OperatorImportFromWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkb);
+
+		Envelope env1 = new Envelope();
+		 
+		env1.addAttribute(VertexDescription.Semantics.Z);
+		env1.addAttribute(VertexDescription.Semantics.M);
+		ByteBuffer polygonWKBBuffer = exporterWKB.execute(WkbExportFlags.wkbExportPolygon, env1, null);
+		int wkbType = polygonWKBBuffer.getInt(1);
+		
+		assertTrue(wkbType == WkbGeometryType.wkbPolygonZM);
+		Polygon polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
+		assertTrue(polygon.isEmpty());
+
 	}
 
 	@Test
@@ -1670,6 +1759,89 @@ public class TestImportExport extends TestCase {
 		geoJsonString = exporterGeoJson.execute(0, null, multipoint);
 		assertTrue(geoJsonString.equals("{\"type\":\"MultiPoint\",\"coordinates\":[[10,10,5,33]],\"crs\":null}"));
 	}
+
+	/*
+	 * Start of new test suit
+	 */	
+
+	@Test
+	public static void testImportGeoJsonFormatParsingError() throws Exception {
+		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
+
+		Polygon polygon;
+		String geoJsonString;
+
+		// Test Import from Polygon
+		try {
+			geoJsonString = "{\"type\":\"MultiPoint\",\"type\":\"Polygon\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]},{\"type\":\"MultiPoint\",\"type\":\"MultiPoint\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
+			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
+			assertTrue(false);
+		} catch (Exception e) {
+			assertEquals(e.getMessage(),"parsing error");
+		}
+	}
+	@Test
+	public static void testImportGeoJsonStringParsingError() throws Exception {
+		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
+
+		Polygon polygon;
+		String geoJsonString;
+
+		// Test Import from Polygon
+		try {
+			geoJsonString = "{\"type\": 10;,\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]},{\"type\":\"MultiPoint\",\"type\":\"MultiPoint\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
+			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
+			assertTrue(false);
+		} catch (Exception e) {
+			
+			assertEquals(e.getMessage(),"parsing error");
+		}
+	}
+
+	@Test
+	public static void testImportGeoJsonException() throws Exception {
+		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
+
+		Polygon polygon;
+		String geoJsonString;
+
+		// Test Import from Polygon
+		try {
+			geoJsonString = "{\"type\": \"somethingRandom\";,\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]},{\"type\":\"MultiPoint\",\"type\":\"MultiPoint\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
+			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
+			assertTrue(false);	
+		} catch (Exception e) {
+			// TODO: handle exception
+			
+			assertEquals(e.getMessage(),"somethingRandom");
+		}
+	}
+
+	@Test
+	public static void testImportGeoJsonShapeError() throws Exception {
+		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
+
+		Polygon polygon;
+		String geoJsonString;
+
+		// Test Import from Polygon
+		
+		try {
+			geoJsonString = "{\"type\": \"GeometryCollection\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
+			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Polyline, geoJsonString, null).getGeometry());
+			assertTrue(false);	
+		} catch (Exception e) { 
+			// TODO: handle exception
+			assertEquals(e.getMessage(),"parsing error");
+		}
+	}
+
+
+	/*
+	 * Test suit ends
+	 */	
+	
+
 
 	@Test
 	public static void testImportGeoJsonPolygon() throws Exception {
