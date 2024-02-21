@@ -1524,7 +1524,7 @@ public class TestImportExport extends TestCase {
 
 	//My function
 	@Test
-	public static void testImportGeoJsonParsingError() throws Exception {
+	public static void testImportGeoJsonFormatParsingError() throws Exception {
 		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
 
 		Polygon polygon;
@@ -1538,27 +1538,32 @@ public class TestImportExport extends TestCase {
 			assertNotNull(polygon);		
 		} catch (Exception e) {
 			// e.printStackTrace();
-			System.out.println(e.getMessage());
+			// System.out.println(e.getMessage());
 			assertEquals(e.getMessage(),"parsing error");
 			// TODO: handle exception
 		}
-		// assertTrue(polygon.isEmpty());
-		// assertTrue(!polygon.hasAttribute(VertexDescription.Semantics.Z));
-		// assertTrue(!polygon.hasAttribute(VertexDescription.Semantics.M));
-
-		// geoJsonString = "{\"type\": \"Polygon\", \"coordinates\": [[], [[10, 10, 5], [20, 10, 5], [20, 20, 5], [10, 20, 5], [10, 10, 5]], [[12, 12, 3]], [], [[10, 10, 1], [12, 12, 1]]]}";
-		// polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
-		// assertTrue(polygon != null);
-		// polygon.queryEnvelope2D(envelope);
-		// assertTrue(envelope.xmin == 10 && envelope.xmax == 20 && envelope.ymin == 10 && envelope.ymax == 20);
-		// assertTrue(polygon.getPointCount() == 8);
-		// assertTrue(polygon.getPathCount() == 3);
-		// assertTrue(polygon.hasAttribute(VertexDescription.Semantics.Z));
-
-		// geoJsonString = "{\"type\": \"Polygon\", \"coordinates\": [[[35, 10], [10, 20], [15, 40], [45, 45], [35, 10]], [[20, 30], [35, 35], [30, 20], [20, 30]]]}";
-		// Polygon polygon2 = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
-		// assertTrue(polygon2 != null);
 	}
+	@Test
+	public static void testImportGeoJsonStringParsingError() throws Exception {
+		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
+
+		Polygon polygon;
+		String geoJsonString;
+		// Envelope2D envelope = new Envelope2D();
+
+		// Test Import from Polygon
+		try {
+			geoJsonString = "{\"type\": 10;,\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]},{\"type\":\"MultiPoint\",\"type\":\"MultiPoint\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
+			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
+			assertNotNull(polygon);		
+		} catch (Exception e) {
+			// e.printStackTrace();
+			// System.out.println(e.getMessage());
+			assertEquals(e.getMessage(),"parsing error");
+			// TODO: handle exception
+		}
+	}
+
 
 	@Test
 	public static void testImportGeoJsonPolygon() throws Exception {
