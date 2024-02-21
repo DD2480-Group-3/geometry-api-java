@@ -46,3 +46,6 @@ target/*
 
 #Ignore bc files
 *.bc
+
+#vsc
+.vscode
