@@ -10,12 +10,15 @@ description.jardesc
 *.bak
 *.properties
 *.zip
+*.log
+*.bc
 
 # Intellij project files
 *.iml
 *.ipr
 *.iws
 .idea/
+
 
 # Eclipse project files
 .settings/
@@ -40,3 +43,6 @@ target/*
 /target/
 
 .metadata/
+
+#vscode
+.vscode

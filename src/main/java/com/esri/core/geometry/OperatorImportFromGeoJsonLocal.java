@@ -209,6 +209,7 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
         field_name = json_iterator.currentString();
         bCover.add(0);
 
+
         if (field_name.equals("type")) {
           bCover.add(1);
           if (b_type_found) {
