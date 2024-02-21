@@ -1522,7 +1522,9 @@ public class TestImportExport extends TestCase {
 		assertTrue(geoJsonString.equals("{\"type\":\"MultiPoint\",\"coordinates\":[[10,10,5,33]],\"crs\":null}"));
 	}
 
-	//start of new test suit
+	/*
+	 * Start of new test suit
+	 */	
 
 	@Test
 	public static void testImportGeoJsonFormatParsingError() throws Exception {
@@ -1583,7 +1585,11 @@ public class TestImportExport extends TestCase {
 			assertEquals(e.getMessage(),"somethingRandom");
 		}
 	}
-	
+
+
+	/*
+	 * Test suit ends
+	 */	
 	
 
 
