@@ -618,7 +618,7 @@ public class TestImportExport extends TestCase {
 		wktString = exporterWKT.execute(WktExportFlags.wktExportPolygon, p, null);
 		assertTrue(wktString.equals("POLYGON ((0 0, 10 10, 0 10, 0 0), (36 17, 36 17, 36 17), (19 19, -19 -19, 19 19), (23 88, 83 87, 59 79, 13 43, 23 88), (23 88, 67 79, 88 43, 23 88), (23 88, 67 88, 88 43, 23 88), (23 67, 43 67, 23 67))"));
 
-		Polygon polygon = makePolygon();
+		Polygon polygon = makePolygon(true, true);
 
 		// Test Import Polygon from Polygon8
 		ByteBuffer polygonWKBBuffer = exporterWKB.execute(0, polygon, null);
@@ -730,7 +730,7 @@ public class TestImportExport extends TestCase {
 		String wktString = exporterWKT.execute(0, p, null);
 		assertTrue(wktString.equals("MULTILINESTRING ((36 17, 36 17), (19 19, 19 19), (88 29, 13 43, 59 88))"));
 
-		Polyline polyline = makePolyline();
+		Polyline polyline = makePolyline(true, true, true);
 		polyline.dropAttribute(VertexDescription.Semantics.ID);
 
 		// Test Import Polyline from Polyline
