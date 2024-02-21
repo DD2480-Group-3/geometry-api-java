@@ -234,4 +234,29 @@ public class TestPoint extends TestCase {
 		env.replaceNaNs(VertexDescription.Semantics.Z, 5);
 		assertTrue(env.queryInterval(VertexDescription.Semantics.Z, 0).equals(new Envelope1D(5, 5)));
 	}	
+
+	@Test
+	public void testCalculateCircleCenterFromThreePoints(){
+		Point2D p1 = new Point2D(0, 0);
+		Point2D p2 = new Point2D(0, 2);
+		Point2D p3 = new Point2D(2, 0);
+		Point2D p4 = new Point2D(1,1);
+		
+		Point2D center = Point2D.calculateCircleCenterFromThreePoints(p1, p2, p3);
+
+		assertEquals(center.x, p4.x, 0);
+		assertEquals(center.y, p4.y, 0);
+	}
+
+	@Test
+	public void testCalculateCircleCenterFromThreePointsWithColinearPoints(){
+		Point2D p1 = new Point2D(0, 0);
+		Point2D p2 = new Point2D(1, 1);
+		Point2D p3 = new Point2D(2, 2);
+		
+		Point2D center = Point2D.calculateCircleCenterFromThreePoints(p1, p2, p3);
+
+		assertEquals(center.x, NumberUtils.NaN(), 0);
+		assertEquals(center.y, NumberUtils.NaN(), 0);
+	}
 }
