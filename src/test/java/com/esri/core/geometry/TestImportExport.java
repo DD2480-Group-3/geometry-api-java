@@ -883,6 +883,52 @@ public class TestImportExport extends TestCase {
 
 	}
 
+	/**
+	 * Testing to export an empty envelope with setting it's semantic attribute to be Z.
+	 * First assertion is true since this envelope's geometry type will be  MultiPolygonZ.
+	 * Second assertion is also true since the envelope is empty.
+	 */
+	@Test
+	public static void testCoverageForExportEnvelopeToWKB_3() {
+		OperatorExportToWkb exporterWKB = (OperatorExportToWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToWkb);
+		OperatorImportFromWkb importerWKB = (OperatorImportFromWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkb);
+
+		Envelope env1 = new Envelope();
+		env1.addAttribute(VertexDescription.Semantics.Z);
+		
+		ByteBuffer polygonWKBBuffer = exporterWKB.execute(WkbExportFlags.wkbExportPolygon, env1, null);
+		int wkbType = polygonWKBBuffer.getInt(1);
+		
+		assertTrue(wkbType == WkbGeometryType.wkbMultiPolygonZ);
+		Polygon polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
+		
+		assertTrue(polygon.isEmpty());
+
+	}
+
+	/**
+	 * Testing to exporting an empty envelope with semantic attributes Z and M
+	 * First assertion will be true since the envelope have both Z and M semantics.
+	 * Second assertion is also true since the envelope is empty.
+	 */
+	@Test
+	public static void testCoverageForExportEnvelopeToWKB_4() {
+		OperatorExportToWkb exporterWKB = (OperatorExportToWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToWkb);
+		OperatorImportFromWkb importerWKB = (OperatorImportFromWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkb);
+
+		Envelope env1 = new Envelope();
+		 
+		env1.addAttribute(VertexDescription.Semantics.Z);
+		env1.addAttribute(VertexDescription.Semantics.M);
+		ByteBuffer polygonWKBBuffer = exporterWKB.execute(WkbExportFlags.wkbExportPolygon, env1, null);
+		int wkbType = polygonWKBBuffer.getInt(1);
+		
+		assertTrue(wkbType == WkbGeometryType.wkbPolygonZM);
+		Polygon polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
+		assertTrue(polygon.isEmpty());
+
+	}
+
 	@Test
 	public static void testImportExportWktGeometryCollection() {
 		OperatorImportFromWkt importerWKT = (OperatorImportFromWkt) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkt);
