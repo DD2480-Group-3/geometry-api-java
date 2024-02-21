@@ -202,6 +202,7 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
       String field_name = null;
       MapOGCStructure ms = new MapOGCStructure();
 
+      // System.out.println("initial type : "  + type);
       while (
         (current_token = json_iterator.nextToken()) !=
         JsonReader.Token.END_OBJECT
@@ -234,6 +235,7 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
           }
 
           String s = json_iterator.currentString();
+          // System.out.println("string s : " + s);
           try {
             geo_json_type = GeoJsonType.valueOf(s);
             bCover.add(6);
@@ -243,8 +245,11 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
             throw new JsonGeometryException(s);
           }
 
+          // System.out.println("initial geo json : " + geo_json_type);
           if (geo_json_type == GeoJsonType.GeometryCollection) {
             bCover.add(8);
+            // System.out.println("in branch 8");
+            // System.out.println(type);
             if (type != Geometry.Type.Unknown) {
               bCover.add(9);
               bCover.saveResults();

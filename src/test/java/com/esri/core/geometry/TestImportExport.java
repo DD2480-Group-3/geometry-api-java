@@ -1586,6 +1586,27 @@ public class TestImportExport extends TestCase {
 		}
 	}
 
+	@Test
+	public static void testImportGeoJsonShapeError() throws Exception {
+		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
+
+		Polygon polygon;
+		String geoJsonString;
+
+		// Test Import from Polygon
+		// System.out.println("current test");
+		try {
+			geoJsonString = "{\"type\": \"GeometryCollection\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
+			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Polyline, geoJsonString, null).getGeometry());
+			assertTrue(false);	
+		} catch (Exception e) { 
+			// TODO: handle exception
+			// e.printStackTrace();
+			// System.out.println(e.getMessage());
+			assertEquals(e.getMessage(),"parsing error");
+		}
+	}
+
 
 	/*
 	 * Test suit ends
