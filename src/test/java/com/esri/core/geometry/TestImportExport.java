@@ -1522,7 +1522,8 @@ public class TestImportExport extends TestCase {
 		assertTrue(geoJsonString.equals("{\"type\":\"MultiPoint\",\"coordinates\":[[10,10,5,33]],\"crs\":null}"));
 	}
 
-	//My function
+	//start of new test suit
+
 	@Test
 	public static void testImportGeoJsonFormatParsingError() throws Exception {
 		OperatorImportFromGeoJson importerGeoJson = (OperatorImportFromGeoJson) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromGeoJson);
