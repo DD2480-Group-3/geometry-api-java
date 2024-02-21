@@ -41,5 +41,11 @@ target/*
 
 .metadata/
 
+#Ignore log files
 *.log
+
+#Ignore bc files
 *.bc
+
+#vsc
+.vscode
