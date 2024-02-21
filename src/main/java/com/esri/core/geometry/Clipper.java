@@ -333,10 +333,6 @@ class Clipper {
 
 	MultiPath clipPolyline_(Polyline polyline_in, double tolerance) {
 		// Forward decl for java port
-        //
-        BranchCover bc = new BranchCover(30, "clipPolyline_");
-
-
 		Envelope2D seg_env = new Envelope2D();
 		Envelope2D sub_seg_env = new Envelope2D();
 		double[] result_ordinates = new double[9];
@@ -346,34 +342,29 @@ class Clipper {
 		Envelope2D orig_env2D = new Envelope2D();
 		polyline_in.queryLooseEnvelope(orig_env2D);
 		for (int iclip_plane = 0; iclip_plane < 4; iclip_plane++) {
-            bc.add(0);
 			boolean b_intersects_plane = false;
 			boolean b_axis_x = (iclip_plane & 1) != 0;
 			double clip_value = 0;
 			switch (iclip_plane) {
 			case 0:
-            bc.add(1);
 				clip_value = m_extent.xmin;
 				b_intersects_plane = orig_env2D.xmin <= clip_value
 						&& orig_env2D.xmax >= clip_value;
 				assert (b_intersects_plane || clip_value < orig_env2D.xmin);
 				break;
 			case 1:
-            bc.add(2);
 				clip_value = m_extent.ymin;
 				b_intersects_plane = orig_env2D.ymin <= clip_value
 						&& orig_env2D.ymax >= clip_value;
 				assert (b_intersects_plane || clip_value < orig_env2D.ymin);
 				break;
 			case 2:
-            bc.add(3);
 				clip_value = m_extent.xmax;
 				b_intersects_plane = orig_env2D.xmin <= clip_value
 						&& orig_env2D.xmax >= clip_value;
 				assert (b_intersects_plane || clip_value > orig_env2D.xmax);
 				break;
 			case 3:
-            bc.add(4);
 				clip_value = m_extent.ymax;
 				b_intersects_plane = orig_env2D.ymin <= clip_value
 						&& orig_env2D.ymax >= clip_value;
@@ -381,11 +372,10 @@ class Clipper {
 				break;
 			}
 
-			if (!b_intersects_plane){
-            bc.add(5);
+			if (!b_intersects_plane)
 				continue;// Optimize for common case when only few sides of the
 							// clipper envelope intersect the geometry.
-            }else {bc.add(6);}
+
 			MultiPath src_poly = result_poly;
 			result_poly = (MultiPath) polyline_in.createInstance();
 
@@ -395,58 +385,44 @@ class Clipper {
 			Point2D pt_prev;
 			Point2D pt = new Point2D();
 			while (seg_iter.nextPath()) {
-            bc.add(7);
 				int inside = -1;
 				boolean b_start_new_path = true;
 				while (seg_iter.hasNextSegment()) {
-                bc.add(8);
 					Segment segment = seg_iter.nextSegment();
 					segment.queryEnvelope2D(seg_env);
 					int seg_plane_intersection_status = checkSegmentIntersection_(
 							seg_env, iclip_plane, clip_value);
 					if (seg_plane_intersection_status == -1) // intersects plane
 					{
-                        bc.add(9);
-                        int count = segment.intersectionWithAxis2D(b_axis_x,
-                            clip_value, result_ordinates, parameters);
-                        if (count > 0) {
-                            bc.add(10);
-                            double t0 = 0.0;
-                            pt_prev = segment.getStartXY();
-                            for (int i = 0; i <= count; i++) {
-                                bc.add(11);
-                                double t = i < count ? parameters[i] : 1.0;
-                                if (t0 == t){
-                                    bc.add(12);
-                                    continue;
-                                }else{bc.add(13); }
-            
+						int count = segment.intersectionWithAxis2D(b_axis_x,
+								clip_value, result_ordinates, parameters);
+						if (count > 0) {
+							double t0 = 0.0;
+							pt_prev = segment.getStartXY();
+							for (int i = 0; i <= count; i++) {
+								double t = i < count ? parameters[i] : 1.0;
+								if (t0 == t)
+									continue;
 
 								segment.cut(t0, t, sub_segment_buffer);
 								Segment sub_seg = sub_segment_buffer.get();
 								sub_seg.setStartXY(pt_prev);
 								if (i < count) {// snap to plane
-                                    bc.add(14);
 									if (b_axis_x) {
-                                    bc.add(15);
 										pt.x = result_ordinates[i];
 										pt.y = clip_value;
 									} else {
-                                    bc.add(16);
 										pt.x = clip_value;
 										pt.y = result_ordinates[i];
 									}
 									sub_seg.setEndXY(pt);
-								}else {
-                                    bc.add(17);
-                                }
+								}
 
 								sub_seg.queryEnvelope2D(sub_seg_env);
 								int sub_segment_plane_intersection_status = checkSegmentIntersection_(
 										sub_seg_env, iclip_plane, clip_value);
 
 								if (sub_segment_plane_intersection_status == -1) {
-                                    bc.add(18);
 									// subsegment is intertsecting the plane. We
 									// need to snap one of the endpoints to
 									// ensure no intersection.
@@ -455,41 +431,35 @@ class Clipper {
 									Point2D pt_1 = sub_seg.getStartXY();
 									Point2D pt_2 = sub_seg.getEndXY();
 									if (!b_axis_x) {
-                                        bc.add(19);
-                                        assert ((pt_1.x < clip_value && pt_2.x > clip_value) || (pt_1.x > clip_value && pt_2.x < clip_value));
-                                        double d_1 = Math.abs(pt_1.x
-                                        - clip_value);
-                                        double d_2 = Math.abs(pt_2.x
-                                        - clip_value);
-                                        if (d_1 < d_2) {
-                                            bc.add(20);
-                                            pt_1.x = clip_value;
-                                            sub_seg.setStartXY(pt_1);
-                                        } else {
-                                            bc.add(21);
-                                            pt_2.x = clip_value;
-                                            sub_seg.setEndXY(pt_2);
-                                        }
-                                    } else {
-                                        bc.add(22);
-                                        assert ((pt_1.y < clip_value && pt_2.y > clip_value) || (pt_1.y > clip_value && pt_2.y < clip_value));
-                                        double d_1 = Math.abs(pt_1.y
-                                        - clip_value);
-                                        double d_2 = Math.abs(pt_2.y
-                                        - clip_value);
-                                        if (d_1 < d_2) {
-                                            bc.add(23);
-                                            pt_1.y = clip_value;
-                                            sub_seg.setStartXY(pt_1);
-                                        } else {
-                                            bc.add(24);
-                                            pt_2.y = clip_value;
-                                            sub_seg.setEndXY(pt_2);
-                                        }
-                                    }
+										assert ((pt_1.x < clip_value && pt_2.x > clip_value) || (pt_1.x > clip_value && pt_2.x < clip_value));
+										double d_1 = Math.abs(pt_1.x
+												- clip_value);
+										double d_2 = Math.abs(pt_2.x
+												- clip_value);
+										if (d_1 < d_2) {
+											pt_1.x = clip_value;
+											sub_seg.setStartXY(pt_1);
+										} else {
+											pt_2.x = clip_value;
+											sub_seg.setEndXY(pt_2);
+										}
+									} else {
+										assert ((pt_1.y < clip_value && pt_2.y > clip_value) || (pt_1.y > clip_value && pt_2.y < clip_value));
+										double d_1 = Math.abs(pt_1.y
+												- clip_value);
+										double d_2 = Math.abs(pt_2.y
+												- clip_value);
+										if (d_1 < d_2) {
+											pt_1.y = clip_value;
+											sub_seg.setStartXY(pt_1);
+										} else {
+											pt_2.y = clip_value;
+											sub_seg.setEndXY(pt_2);
+										}
+									}
 
-                                    // after the endpoint has been adjusted,
-                                    // recheck the segment.
+									// after the endpoint has been adjusted,
+									// recheck the segment.
 									sub_seg.queryEnvelope2D(sub_seg_env);
 									sub_segment_plane_intersection_status = checkSegmentIntersection_(
 											sub_seg_env, iclip_plane,
@@ -503,33 +473,25 @@ class Clipper {
 
 								inside = sub_segment_plane_intersection_status;
 								if (inside == 1) {
-                                    bc.add(25);
 									result_poly.addSegment(sub_seg,
 											b_start_new_path);
 									b_start_new_path = false;
-								} else{
-                                    bc.add(26);
+								} else
 									b_start_new_path = true;
-                                }
 							}
 						}
 					} else {
-                        bc.add(27);
 						inside = seg_plane_intersection_status;
 						if (inside == 1) {
-                            bc.add(28);
 							result_poly.addSegment(segment, b_start_new_path);
 							b_start_new_path = false;
-						} else{
-                            bc.add(29);
+						} else
 							b_start_new_path = true;
-                        }
 					}
 				}
 			}
 		}
 
-        bc.saveResults();
 		return result_poly;
 	}
 
