@@ -281,6 +281,23 @@ public class TestGeomToGeoJson extends TestCase {
 		assertTrue(imported.getGeometry().getType() == Geometry.Type.Polygon);
 	}
 
+	// @Test
+	// public void testPolygonM() {
+	// 	Polygon p = new Polygon();
+	// 	p.startPath(1.0, 1.0);
+	// 	p.lineTo(2.0, 2.0);
+	// 	p.lineTo(3.0, 1.0);
+	// 	p.lineTo(2.0, 0.0);
+
+	// 	OperatorExportToGeoJson exporter = (OperatorExportToGeoJson) factory.getOperator(Operator.Type.ExportToGeoJson);
+	// 	String result = exporter.execute(p);
+	// 	assertEquals("{\"type\":\"Polygon\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}", result);
+
+	// 	MapGeometry imported = OperatorImportFromGeoJson.local().execute(0, Geometry.Type.Unknown, result, null);
+	// 	assertFalse(imported.getGeometry().isEmpty());
+	// 	assertSame(imported.getGeometry().getType(),Geometry.Type.Polygon);
+	// }
+
 	@Test
 	public void testPolygonGeometryEngine() {
 		Polygon p = new Polygon();

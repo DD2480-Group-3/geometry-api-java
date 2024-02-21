@@ -206,8 +206,11 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
         (current_token = json_iterator.nextToken()) !=
         JsonReader.Token.END_OBJECT
       ) {
+        // System.out.println(current_token);
         field_name = json_iterator.currentString();
         bCover.add(0);
+        // System.out.println(field_name);
+
 
         if (field_name.equals("type")) {
           bCover.add(1);
