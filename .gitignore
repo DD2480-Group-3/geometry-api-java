@@ -16,6 +16,8 @@ description.jardesc
 *.ipr
 *.iws
 .idea/
+.log
+.bc
 
 # Eclipse project files
 .settings/
