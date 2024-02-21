@@ -7,7 +7,9 @@ public class RefactorExecuteOGC {
         
         if(wkbType > 3000){
             if (bCheckConsistentAttributes) {
-                RefactorExecuteOGC.checkHasZsHasMs(wkbType, bHasZs, bHasMs);
+                if (!bHasZs || !bHasMs) {
+                    throw new IllegalArgumentException();
+                } 
             } else {
                 bHasZs = true;
                 bHasMs = true;
@@ -15,7 +17,9 @@ public class RefactorExecuteOGC {
             }
         } else if (wkbType > 2000) {
             if (bCheckConsistentAttributes) {
-                RefactorExecuteOGC.checkHasZsHasMs(wkbType, bHasZs, bHasMs);
+                if (bHasZs || !bHasMs) {
+                    throw new IllegalArgumentException();
+                } 
             } else {
                 bHasZs = false;
                 bHasMs = true;
@@ -23,16 +27,19 @@ public class RefactorExecuteOGC {
             }
         } else if (wkbType > 1000) {
             if (bCheckConsistentAttributes) {
-                RefactorExecuteOGC.checkHasZsHasMs(wkbType, bHasZs, bHasMs);
+                if (!bHasZs || bHasMs) {
+                    throw new IllegalArgumentException();
+                } 
             } else {
                 bHasZs = true;
                 bHasMs = false;
                 bCheckConsistentAttributes = true;
             }
-
         }else {
             if (bCheckConsistentAttributes) {
-                RefactorExecuteOGC.checkHasZsHasMs(wkbType, bHasZs, bHasMs);
+                if (bHasZs || bHasMs) {
+                    throw new IllegalArgumentException();
+                } 
             } else {
                 bHasZs = false;
                 bHasMs = false;
@@ -46,39 +53,4 @@ public class RefactorExecuteOGC {
 
         return r_val;
     }
-    
-    public static void checkHasZsHasMs(int wkbType, boolean bHasZs, boolean bHasMs) throws IllegalArgumentException {
-        if (wkbType > 3000) {
-            if (!bHasZs || !bHasMs) {
-                throw new IllegalArgumentException();
-            } else {
-            }
-        }
-        else if (wkbType > 2000) {
-            if (bHasZs || !bHasMs) {
-                throw new IllegalArgumentException();
-            } else {
-            }
-        } else if (wkbType > 1000) {
-            if (!bHasZs || bHasMs) {
-                throw new IllegalArgumentException();
-            } else {
-            }
-        }else {
-            if (bHasZs || bHasMs) {
-                throw new IllegalArgumentException();
-            } else {
-            }
-        }
-    }
 }
-
-/* public class BAttributes {
-    public boolean bHasZs;
-    public boolean bHasMs;
-    public boolean bCheckConsistentAttributes;
-
-    public BAttributes(bHas){
-
-    }
-} */
