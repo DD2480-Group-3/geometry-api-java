@@ -1628,10 +1628,6 @@ public class TestImportExport extends TestCase {
 			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
 			assertTrue(false);
 		} catch (Exception e) {
-			// TODO: handle exception
-
-			// e.printStackTrace();
-			// System.out.println(e.getMessage());
 			assertEquals(e.getMessage(),"parsing error");
 		}
 	}
@@ -1648,9 +1644,7 @@ public class TestImportExport extends TestCase {
 			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Unknown, geoJsonString, null).getGeometry());
 			assertTrue(false);
 		} catch (Exception e) {
-			// TODO: handle exception
-			// e.printStackTrace();
-			// System.out.println(e.getMessage());
+			
 			assertEquals(e.getMessage(),"parsing error");
 		}
 	}
@@ -1669,8 +1663,7 @@ public class TestImportExport extends TestCase {
 			assertTrue(false);	
 		} catch (Exception e) {
 			// TODO: handle exception
-			// e.printStackTrace();
-			// System.out.println(e.getMessage());
+			
 			assertEquals(e.getMessage(),"somethingRandom");
 		}
 	}
@@ -1683,15 +1676,13 @@ public class TestImportExport extends TestCase {
 		String geoJsonString;
 
 		// Test Import from Polygon
-		// System.out.println("current test");
+		
 		try {
 			geoJsonString = "{\"type\": \"GeometryCollection\",\"coordinates\":[[[1,1],[2,0],[3,1],[2,2],[1,1]]]}";
 			polygon = (Polygon) (importerGeoJson.execute(0, Geometry.Type.Polyline, geoJsonString, null).getGeometry());
 			assertTrue(false);	
 		} catch (Exception e) { 
 			// TODO: handle exception
-			// e.printStackTrace();
-			// System.out.println(e.getMessage());
 			assertEquals(e.getMessage(),"parsing error");
 		}
 	}
