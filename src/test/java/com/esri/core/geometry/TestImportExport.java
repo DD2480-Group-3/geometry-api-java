@@ -61,14 +61,16 @@ public class TestImportExport extends TestCase {
 
 		@SuppressWarnings("unused") Envelope env = new Envelope(), otherenv = new Envelope();
 		polygon.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polygon.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(envelope.getXMin() == otherenv.getXMin());
 		assertTrue(envelope.getXMax() == otherenv.getXMax());
 		assertTrue(envelope.getYMin() == otherenv.getYMin());
 		assertTrue(envelope.getYMax() == otherenv.getYMax());
-
-		Envelope1D interval, otherinterval;
-		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
-		otherinterval = polygon.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(interval.vmin == otherinterval.vmin);
 		assertTrue(interval.vmax == otherinterval.vmax);
 	}
@@ -96,16 +98,20 @@ public class TestImportExport extends TestCase {
 
 		@SuppressWarnings("unused") Envelope env = new Envelope(), otherenv = new Envelope();
 		polygon.queryEnvelope(otherenv);
-		assertTrue(envelope.getXMin() == otherenv.getXMin());
-		assertTrue(envelope.getXMax() == otherenv.getXMax());
-		assertTrue(envelope.getYMin() == otherenv.getYMin());
-		assertTrue(envelope.getYMax() == otherenv.getYMax());
 
 		Envelope1D interval, otherinterval;
 		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
 		otherinterval = polygon.queryInterval(VertexDescription.Semantics.Z, 0);
+		
+		assertTrue(envelope.getXMin() == otherenv.getXMin());
+		assertTrue(envelope.getXMax() == otherenv.getXMax());
+		assertTrue(envelope.getYMin() == otherenv.getYMin());
+		assertTrue(envelope.getYMax() == otherenv.getYMax());
+		
 		assertTrue(interval.vmin == otherinterval.vmin);
 		assertTrue(interval.vmax == otherinterval.vmax);
+
+		assertEquals(true, polygonShapeGeometry.hasM());
 	}
 
 	@Test
@@ -129,14 +135,16 @@ public class TestImportExport extends TestCase {
 		Envelope env = new Envelope(), otherenv = new Envelope();
 		envelope.queryEnvelope(env);
 		polyline.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(env.getXMin() == otherenv.getXMin());
 		assertTrue(env.getXMax() == otherenv.getXMax());
 		assertTrue(env.getYMin() == otherenv.getYMin());
 		assertTrue(env.getYMax() == otherenv.getYMax());
-
-		Envelope1D interval, otherinterval;
-		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
-		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(interval.vmin == otherinterval.vmin);
 		assertTrue(interval.vmax == otherinterval.vmax);
 	}
@@ -162,16 +170,20 @@ public class TestImportExport extends TestCase {
 		Envelope env = new Envelope(), otherenv = new Envelope();
 		envelope.queryEnvelope(env);
 		polyline.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(env.getXMin() == otherenv.getXMin());
 		assertTrue(env.getXMax() == otherenv.getXMax());
 		assertTrue(env.getYMin() == otherenv.getYMin());
 		assertTrue(env.getYMax() == otherenv.getYMax());
-
-		Envelope1D interval, otherinterval;
-		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
-		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(interval.vmin == otherinterval.vmin);
 		assertTrue(interval.vmax == otherinterval.vmax);
+
+		assertEquals(true, polylineShapeGeometry.hasM());
 	}
 
 	@Test
@@ -192,16 +204,20 @@ public class TestImportExport extends TestCase {
 		Envelope env = new Envelope(), otherenv = new Envelope();
 		envelope.queryEnvelope(env);
 		polyline.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(env.getXMin() == otherenv.getXMin());
 		assertTrue(env.getXMax() == otherenv.getXMax());
 		assertTrue(env.getYMin() == otherenv.getYMin());
 		assertTrue(env.getYMax() == otherenv.getYMax());
-
-		Envelope1D interval, otherinterval;
-		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
-		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(interval.vmin == otherinterval.vmin);
 		assertTrue(interval.vmax == otherinterval.vmax);
+
+		assertEquals(true, polylineShapeGeometry.hasZ());
 	}
 
 	@Test
@@ -222,16 +238,21 @@ public class TestImportExport extends TestCase {
 		Envelope env = new Envelope(), otherenv = new Envelope();
 		envelope.queryEnvelope(env);
 		polyline.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(env.getXMin() == otherenv.getXMin());
 		assertTrue(env.getXMax() == otherenv.getXMax());
 		assertTrue(env.getYMin() == otherenv.getYMin());
 		assertTrue(env.getYMax() == otherenv.getYMax());
 
-		Envelope1D interval, otherinterval;
-		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
-		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
 		assertTrue(interval.vmin == otherinterval.vmin);
 		assertTrue(interval.vmax == otherinterval.vmax);
+
+		assertEquals(true, polylineShapeGeometry.hasZ());
+		assertEquals(true, polylineShapeGeometry.hasM());
 	}
 
 	@Test
