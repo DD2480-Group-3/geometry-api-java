@@ -40,3 +40,6 @@ target/*
 /target/
 
 .metadata/
+
+*.log
+*.bc
