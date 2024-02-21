@@ -77,10 +77,11 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 	@Override
 	public OGCStructure executeOGC(int importFlags, ByteBuffer wkbBuffer,
 			ProgressTracker progress_tracker) {
-        BranchCover bc = new BranchCover(29, "executeOGC");
+        BranchCover bc = new BranchCover(13, "executeOGC");
 
 		ByteOrder initialOrder = wkbBuffer.order();
 
+            bc.add(0);
 		// read byte ordering
 		int byteOrder = wkbBuffer.get(0);
 
@@ -129,89 +130,45 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 				int ogcType;
 
 				// strip away attributes from type identifier
-
 				if (wkbType > 3000) {
 					bc.add(6);
 					ogcType = wkbType - 3000;
+					
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
 
-					if (bCheckConsistentAttributes) {
-                        bc.add(7);
-                        if (!bHasZs || !bHasMs){
-                            bc.add(8);
-							bc.saveResults();
-                            throw new IllegalArgumentException();
-                        }else {
-
-                        bc.add(9);
-                        }
-					} else {
-                        bc.add(10);
-						bHasZs = true;
-						bHasMs = true;
-						bCheckConsistentAttributes = true;
-					}
 				} else if (wkbType > 2000) {
-					bc.add(11);
+					bc.add(7);
 					ogcType = wkbType - 2000;
 
-					if (bCheckConsistentAttributes) {
-                        bc.add(12);
-						if (bHasZs || !bHasMs){
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
 
-                        bc.add(13);
-							bc.saveResults();
-							throw new IllegalArgumentException();
-                        } else {
-   
-                        bc.add(14);
-                        }
-					} else {
-                        bc.add(15);
-						bHasZs = false;
-						bHasMs = true;
-						bCheckConsistentAttributes = true;
-					}
 				} else if (wkbType > 1000) {
-					bc.add(16);
+					bc.add(8);
 					ogcType = wkbType - 1000;
 
-					if (bCheckConsistentAttributes) {
-                        bc.add(17);
-						if (!bHasZs || bHasMs){
-                        bc.add(18);
-							bc.saveResults();
-							throw new IllegalArgumentException();
-                        }else {
-                        bc.add(19);
-                        }
-					} else {
-                        bc.add(20);
-						bHasZs = true;
-						bHasMs = false;
-						bCheckConsistentAttributes = true;
-					}
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
+
 				} else {
-					bc.add(21);
+					bc.add(9);
 					ogcType = wkbType;
 
-					if (bCheckConsistentAttributes) {
-                        bc.add(22);
-						if (bHasZs || bHasMs){
-                        bc.add(23);
-							bc.saveResults();
-							throw new IllegalArgumentException();
-                        }else {
-                        bc.add(24);
-                        }
-					} else {
-                        bc.add(25);
-						bHasZs = false;
-						bHasMs = false;
-						bCheckConsistentAttributes = true;
-					}
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
 				}
+
 				if (ogcType == 7) {
-					bc.add(26);
+					bc.add(10);
 					int count = wkbHelper.getInt(5);
 					wkbHelper.adjustment += 9;
 
@@ -223,7 +180,7 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 					indices.add(0);
 					numGeometries.add(count);
 				} else {
-					bc.add(27);
+					bc.add(11);
 					geometry = importFromWkb(importFlags,
 							Geometry.Type.Unknown, wkbHelper);
 					OGCStructure leaf = new OGCStructure();
@@ -236,7 +193,7 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
         	bc.saveResults();
 			wkbBuffer.order(initialOrder);
 		}
-        bc.add(28);
+        bc.add(12);
 
 		return root;
 	}
