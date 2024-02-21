@@ -838,6 +838,49 @@ public class TestImportExport extends TestCase {
 		assertTrue(wkbType == WkbGeometryType.wkbPolygon);
 		polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
 		assertTrue(polygon.isEmpty());
+
+		
+	}
+
+	/**
+	 * Testing to export an empty envelope as a MultiPolygon. Since the envelope is empty, assertion will be true.
+	 */
+	@Test
+	public static void testCoverageForExportEnvelopeToWKB_1() {
+		OperatorExportToWkb exporterWKB = (OperatorExportToWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToWkb);
+		OperatorImportFromWkb importerWKB = (OperatorImportFromWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkb);
+
+		Envelope envelope = new Envelope();
+		ByteBuffer polygonWKBBuffer = exporterWKB.execute(WkbExportFlags.wkbExportMultiPolygon, envelope, null);
+		Polygon polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
+		assertTrue(polygon.isEmpty());
+	}
+	
+	/**
+	 * Testing to export a nonempty envelope which has M Semantic attribute.
+	 * First assertion is false because the envelope is not empty.
+	 * Second assertion is true because we set the envelope a PolygonM
+	 * Last one is true because the returned polygon has 4 points.
+	 */
+	@Test
+	public static void testCoverageForExportEnvelopeToWKB_2() {
+		OperatorExportToWkb exporterWKB = (OperatorExportToWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToWkb);
+		OperatorImportFromWkb importerWKB = (OperatorImportFromWkb) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromWkb);
+
+		Envelope env1 = new Envelope(1,1, 2, 4);
+		env1.addAttribute(VertexDescription.Semantics.M);
+		Point p = new Point(100,4);
+		env1.merge(p);
+		
+		assertFalse(p.isEmpty());
+		 
+		ByteBuffer polygonWKBBuffer = exporterWKB.execute(WkbExportFlags.wkbExportPolygon, env1, null);
+		int wkbType = polygonWKBBuffer.getInt(1);
+		assertTrue(wkbType == WkbGeometryType.wkbPolygonM);
+		Polygon polygon = (Polygon) (importerWKB.execute(0, Geometry.Type.Polygon, polygonWKBBuffer, null));
+		int point_count = polygon.getPointCount();
+		assertTrue(point_count == 4);
+
 	}
 
 	@Test
