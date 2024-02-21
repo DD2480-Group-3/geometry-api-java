@@ -7,6 +7,7 @@ public class ResultPrinter{
         BranchCover.resultFileFromName("exportEnvelopeToWKB");
         BranchCover.resultFileFromName("importFromESRIShape");
         BranchCover.resultFileFromName("importFromGeoJsonImpl");
+        BranchCover.resultFileFromName("geodesicDistanceNgs");
         BranchCover.resultFileFromName("executeOGC");
     }
 
