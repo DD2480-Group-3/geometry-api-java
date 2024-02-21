@@ -43,7 +43,7 @@ public class TestImportExport extends TestCase {
 		OperatorExportToESRIShape exporterShape = (OperatorExportToESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToESRIShape);
 		OperatorImportFromESRIShape importerShape = (OperatorImportFromESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromESRIShape);
 
-		Polygon polygon = makePolygon();
+		Polygon polygon = makePolygon(true, true);
 
 		byte[] esriShape = GeometryEngine.geometryToEsriShape(polygon);
 		Geometry imported = GeometryEngine.geometryFromEsriShape(esriShape, Geometry.Type.Unknown);
@@ -61,16 +61,57 @@ public class TestImportExport extends TestCase {
 
 		@SuppressWarnings("unused") Envelope env = new Envelope(), otherenv = new Envelope();
 		polygon.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polygon.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(envelope.getXMin() == otherenv.getXMin());
 		assertTrue(envelope.getXMax() == otherenv.getXMax());
 		assertTrue(envelope.getYMin() == otherenv.getYMin());
 		assertTrue(envelope.getYMax() == otherenv.getYMax());
+		
+		assertTrue(interval.vmin == otherinterval.vmin);
+		assertTrue(interval.vmax == otherinterval.vmax);
+	}
+
+	@Test
+	public static void testImportExportShapePolygonM() {
+		OperatorExportToESRIShape exporterShape = (OperatorExportToESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToESRIShape);
+		OperatorImportFromESRIShape importerShape = (OperatorImportFromESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromESRIShape);
+
+		Polygon polygon = makePolygon(false, true);
+
+		byte[] esriShape = GeometryEngine.geometryToEsriShape(polygon);
+		Geometry imported = GeometryEngine.geometryFromEsriShape(esriShape, Geometry.Type.Unknown);
+		TestCommonMethods.compareGeometryContent((MultiPath) imported, polygon);
+
+		// Test Import Polygon from Polygon
+		ByteBuffer polygonShapeBuffer = exporterShape.execute(0, polygon);
+		Geometry polygonShapeGeometry = importerShape.execute(0, Geometry.Type.Polygon, polygonShapeBuffer);
+
+		TestCommonMethods.compareGeometryContent((MultiPath) polygonShapeGeometry, polygon);
+
+		// Test Import Envelope from Polygon
+		Geometry envelopeShapeGeometry = importerShape.execute(0, Geometry.Type.Envelope, polygonShapeBuffer);
+		Envelope envelope = (Envelope) envelopeShapeGeometry;
+
+		@SuppressWarnings("unused") Envelope env = new Envelope(), otherenv = new Envelope();
+		polygon.queryEnvelope(otherenv);
 
 		Envelope1D interval, otherinterval;
 		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
 		otherinterval = polygon.queryInterval(VertexDescription.Semantics.Z, 0);
+		
+		assertTrue(envelope.getXMin() == otherenv.getXMin());
+		assertTrue(envelope.getXMax() == otherenv.getXMax());
+		assertTrue(envelope.getYMin() == otherenv.getYMin());
+		assertTrue(envelope.getYMax() == otherenv.getYMax());
+		
 		assertTrue(interval.vmin == otherinterval.vmin);
 		assertTrue(interval.vmax == otherinterval.vmax);
+
+		assertEquals(true, polygonShapeGeometry.hasM());
 	}
 
 	@Test
@@ -78,7 +119,7 @@ public class TestImportExport extends TestCase {
 		OperatorExportToESRIShape exporterShape = (OperatorExportToESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToESRIShape);
 		OperatorImportFromESRIShape importerShape = (OperatorImportFromESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromESRIShape);
 
-		Polyline polyline = makePolyline();
+		Polyline polyline = makePolyline(true, true, true);
 
 		// Test Import Polyline from Polyline
 		ByteBuffer polylineShapeBuffer = exporterShape.execute(0, polyline);
@@ -94,16 +135,124 @@ public class TestImportExport extends TestCase {
 		Envelope env = new Envelope(), otherenv = new Envelope();
 		envelope.queryEnvelope(env);
 		polyline.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
+		assertTrue(env.getXMin() == otherenv.getXMin());
+		assertTrue(env.getXMax() == otherenv.getXMax());
+		assertTrue(env.getYMin() == otherenv.getYMin());
+		assertTrue(env.getYMax() == otherenv.getYMax());
+		
+		assertTrue(interval.vmin == otherinterval.vmin);
+		assertTrue(interval.vmax == otherinterval.vmax);
+	}
+
+	@Test
+	public static void testImportExportShapePolylineM() {
+		OperatorExportToESRIShape exporterShape = (OperatorExportToESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToESRIShape);
+		OperatorImportFromESRIShape importerShape = (OperatorImportFromESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromESRIShape);
+
+		Polyline polyline = makePolyline(false, true, false);
+
+		// Test Import Polyline from Polyline
+		ByteBuffer polylineShapeBuffer = exporterShape.execute(0, polyline);
+		Geometry polylineShapeGeometry = importerShape.execute(0, Geometry.Type.Polyline, polylineShapeBuffer);
+
+		// TODO test this
+		TestCommonMethods.compareGeometryContent((MultiPath) polylineShapeGeometry, polyline);
+
+		// Test Import Envelope from Polyline;
+		Geometry envelopeShapeGeometry = importerShape.execute(0, Geometry.Type.Envelope, polylineShapeBuffer);
+		Envelope envelope = (Envelope) envelopeShapeGeometry;
+
+		Envelope env = new Envelope(), otherenv = new Envelope();
+		envelope.queryEnvelope(env);
+		polyline.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
+		assertTrue(env.getXMin() == otherenv.getXMin());
+		assertTrue(env.getXMax() == otherenv.getXMax());
+		assertTrue(env.getYMin() == otherenv.getYMin());
+		assertTrue(env.getYMax() == otherenv.getYMax());
+		
+		assertTrue(interval.vmin == otherinterval.vmin);
+		assertTrue(interval.vmax == otherinterval.vmax);
+
+		assertEquals(true, polylineShapeGeometry.hasM());
+	}
+
+	@Test
+	public static void testImportExportShapePolylineZ() {
+		OperatorExportToESRIShape exporterShape = (OperatorExportToESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToESRIShape);
+		OperatorImportFromESRIShape importerShape = (OperatorImportFromESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromESRIShape);
+
+		Polyline polyline = makePolyline(true, false, false);
+
+		// Test Import Polyline from Polyline
+		ByteBuffer polylineShapeBuffer = exporterShape.execute(0, polyline);
+		Geometry polylineShapeGeometry = importerShape.execute(0, Geometry.Type.Polyline, polylineShapeBuffer);
+
+		// Test Import Envelope from Polyline;
+		Geometry envelopeShapeGeometry = importerShape.execute(0, Geometry.Type.Envelope, polylineShapeBuffer);
+		Envelope envelope = (Envelope) envelopeShapeGeometry;
+
+		Envelope env = new Envelope(), otherenv = new Envelope();
+		envelope.queryEnvelope(env);
+		polyline.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
+		assertTrue(env.getXMin() == otherenv.getXMin());
+		assertTrue(env.getXMax() == otherenv.getXMax());
+		assertTrue(env.getYMin() == otherenv.getYMin());
+		assertTrue(env.getYMax() == otherenv.getYMax());
+		
+		assertTrue(interval.vmin == otherinterval.vmin);
+		assertTrue(interval.vmax == otherinterval.vmax);
+
+		assertEquals(true, polylineShapeGeometry.hasZ());
+	}
+
+	@Test
+	public static void testImportExportShapePolylineZM() {
+		OperatorExportToESRIShape exporterShape = (OperatorExportToESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ExportToESRIShape);
+		OperatorImportFromESRIShape importerShape = (OperatorImportFromESRIShape) OperatorFactoryLocal.getInstance().getOperator(Operator.Type.ImportFromESRIShape);
+
+		Polyline polyline = makePolyline(true, true, false);
+
+		// Test Import Polyline from Polyline
+		ByteBuffer polylineShapeBuffer = exporterShape.execute(0, polyline);
+		Geometry polylineShapeGeometry = importerShape.execute(0, Geometry.Type.Polyline, polylineShapeBuffer);
+
+		// Test Import Envelope from Polyline;
+		Geometry envelopeShapeGeometry = importerShape.execute(0, Geometry.Type.Envelope, polylineShapeBuffer);
+		Envelope envelope = (Envelope) envelopeShapeGeometry;
+
+		Envelope env = new Envelope(), otherenv = new Envelope();
+		envelope.queryEnvelope(env);
+		polyline.queryEnvelope(otherenv);
+		
+		Envelope1D interval, otherinterval;
+		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
+		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
+		
 		assertTrue(env.getXMin() == otherenv.getXMin());
 		assertTrue(env.getXMax() == otherenv.getXMax());
 		assertTrue(env.getYMin() == otherenv.getYMin());
 		assertTrue(env.getYMax() == otherenv.getYMax());
 
-		Envelope1D interval, otherinterval;
-		interval = envelope.queryInterval(VertexDescription.Semantics.Z, 0);
-		otherinterval = polyline.queryInterval(VertexDescription.Semantics.Z, 0);
 		assertTrue(interval.vmin == otherinterval.vmin);
 		assertTrue(interval.vmax == otherinterval.vmax);
+
+		assertEquals(true, polylineShapeGeometry.hasZ());
+		assertEquals(true, polylineShapeGeometry.hasM());
 	}
 
 	@Test
@@ -490,7 +639,7 @@ public class TestImportExport extends TestCase {
 		wktString = exporterWKT.execute(WktExportFlags.wktExportPolygon, p, null);
 		assertTrue(wktString.equals("POLYGON ((0 0, 10 10, 0 10, 0 0), (36 17, 36 17, 36 17), (19 19, -19 -19, 19 19), (23 88, 83 87, 59 79, 13 43, 23 88), (23 88, 67 79, 88 43, 23 88), (23 88, 67 88, 88 43, 23 88), (23 67, 43 67, 23 67))"));
 
-		Polygon polygon = makePolygon();
+		Polygon polygon = makePolygon(true, true);
 
 		// Test Import Polygon from Polygon8
 		ByteBuffer polygonWKBBuffer = exporterWKB.execute(0, polygon, null);
@@ -602,7 +751,7 @@ public class TestImportExport extends TestCase {
 		String wktString = exporterWKT.execute(0, p, null);
 		assertTrue(wktString.equals("MULTILINESTRING ((36 17, 36 17), (19 19, 19 19), (88 29, 13 43, 59 88))"));
 
-		Polyline polyline = makePolyline();
+		Polyline polyline = makePolyline(true, true, true);
 		polyline.dropAttribute(VertexDescription.Semantics.ID);
 
 		// Test Import Polyline from Polyline
@@ -1927,7 +2076,7 @@ public class TestImportExport extends TestCase {
 		assertTrue(res.equals(poly));
 	}
 	
-	public static Polygon makePolygon() {
+	public static Polygon makePolygon(boolean z, boolean m) {
 		Polygon poly = new Polygon();
 		poly.startPath(0, 0);
 		poly.lineTo(0, 10);
@@ -1944,31 +2093,35 @@ public class TestImportExport extends TestCase {
 		poly.lineTo(30, 15);
 		poly.lineTo(30, 0);
 
-		poly.setAttribute(VertexDescription.Semantics.Z, 0, 0, 2);
-		poly.setAttribute(VertexDescription.Semantics.Z, 1, 0, 3);
-		poly.setAttribute(VertexDescription.Semantics.Z, 2, 0, 5);
-		poly.setAttribute(VertexDescription.Semantics.Z, 3, 0, 7);
-		poly.setAttribute(VertexDescription.Semantics.Z, 4, 0, 11);
-		poly.setAttribute(VertexDescription.Semantics.Z, 5, 0, 13);
-		poly.setAttribute(VertexDescription.Semantics.Z, 6, 0, 17);
-		poly.setAttribute(VertexDescription.Semantics.Z, 7, 0, 19);
-		poly.setAttribute(VertexDescription.Semantics.Z, 8, 0, 23);
-		poly.setAttribute(VertexDescription.Semantics.Z, 9, 0, 29);
-		poly.setAttribute(VertexDescription.Semantics.Z, 10, 0, 31);
-		poly.setAttribute(VertexDescription.Semantics.Z, 11, 0, 37);
-
-		poly.setAttribute(VertexDescription.Semantics.M, 0, 0, 2);
-		poly.setAttribute(VertexDescription.Semantics.M, 1, 0, 4);
-		poly.setAttribute(VertexDescription.Semantics.M, 2, 0, 8);
-		poly.setAttribute(VertexDescription.Semantics.M, 3, 0, 16);
-		poly.setAttribute(VertexDescription.Semantics.M, 4, 0, 32);
-		poly.setAttribute(VertexDescription.Semantics.M, 5, 0, 64);
-		poly.setAttribute(VertexDescription.Semantics.M, 6, 0, 128);
-		poly.setAttribute(VertexDescription.Semantics.M, 7, 0, 256);
-		poly.setAttribute(VertexDescription.Semantics.M, 8, 0, 512);
-		poly.setAttribute(VertexDescription.Semantics.M, 9, 0, 1024);
-		poly.setAttribute(VertexDescription.Semantics.M, 10, 0, 2048);
-		poly.setAttribute(VertexDescription.Semantics.M, 11, 0, 4096);
+		if (z) {
+			poly.setAttribute(VertexDescription.Semantics.Z, 0, 0, 2);
+			poly.setAttribute(VertexDescription.Semantics.Z, 1, 0, 3);
+			poly.setAttribute(VertexDescription.Semantics.Z, 2, 0, 5);
+			poly.setAttribute(VertexDescription.Semantics.Z, 3, 0, 7);
+			poly.setAttribute(VertexDescription.Semantics.Z, 4, 0, 11);
+			poly.setAttribute(VertexDescription.Semantics.Z, 5, 0, 13);
+			poly.setAttribute(VertexDescription.Semantics.Z, 6, 0, 17);
+			poly.setAttribute(VertexDescription.Semantics.Z, 7, 0, 19);
+			poly.setAttribute(VertexDescription.Semantics.Z, 8, 0, 23);
+			poly.setAttribute(VertexDescription.Semantics.Z, 9, 0, 29);
+			poly.setAttribute(VertexDescription.Semantics.Z, 10, 0, 31);
+			poly.setAttribute(VertexDescription.Semantics.Z, 11, 0, 37);
+		}
+		
+		if (m) {
+			poly.setAttribute(VertexDescription.Semantics.M, 0, 0, 2);
+			poly.setAttribute(VertexDescription.Semantics.M, 1, 0, 4);
+			poly.setAttribute(VertexDescription.Semantics.M, 2, 0, 8);
+			poly.setAttribute(VertexDescription.Semantics.M, 3, 0, 16);
+			poly.setAttribute(VertexDescription.Semantics.M, 4, 0, 32);
+			poly.setAttribute(VertexDescription.Semantics.M, 5, 0, 64);
+			poly.setAttribute(VertexDescription.Semantics.M, 6, 0, 128);
+			poly.setAttribute(VertexDescription.Semantics.M, 7, 0, 256);
+			poly.setAttribute(VertexDescription.Semantics.M, 8, 0, 512);
+			poly.setAttribute(VertexDescription.Semantics.M, 9, 0, 1024);
+			poly.setAttribute(VertexDescription.Semantics.M, 10, 0, 2048);
+			poly.setAttribute(VertexDescription.Semantics.M, 11, 0, 4096);
+		}
 
 		return poly;
 	}
@@ -1993,7 +2146,7 @@ public class TestImportExport extends TestCase {
 		return poly;
 	}
 
-	public static Polyline makePolyline() {
+	public static Polyline makePolyline(Boolean z, Boolean m, Boolean id) {
 		Polyline poly = new Polyline();
 		poly.startPath(10, 1);
 		poly.lineTo(15, 20);
@@ -2005,32 +2158,38 @@ public class TestImportExport extends TestCase {
 		poly.lineTo(300, 414);
 		poly.lineTo(610, 14);
 
-		poly.setAttribute(VertexDescription.Semantics.Z, 0, 0, 2);
-		poly.setAttribute(VertexDescription.Semantics.Z, 1, 0, 3);
-		poly.setAttribute(VertexDescription.Semantics.Z, 2, 0, 5);
-		poly.setAttribute(VertexDescription.Semantics.Z, 3, 0, 7);
-		poly.setAttribute(VertexDescription.Semantics.Z, 4, 0, 11);
-		poly.setAttribute(VertexDescription.Semantics.Z, 5, 0, 13);
-		poly.setAttribute(VertexDescription.Semantics.Z, 6, 0, 17);
-		poly.setAttribute(VertexDescription.Semantics.Z, 7, 0, 19);
+		if (z){
+			poly.setAttribute(VertexDescription.Semantics.Z, 0, 0, 2);
+			poly.setAttribute(VertexDescription.Semantics.Z, 1, 0, 3);
+			poly.setAttribute(VertexDescription.Semantics.Z, 2, 0, 5);
+			poly.setAttribute(VertexDescription.Semantics.Z, 3, 0, 7);
+			poly.setAttribute(VertexDescription.Semantics.Z, 4, 0, 11);
+			poly.setAttribute(VertexDescription.Semantics.Z, 5, 0, 13);
+			poly.setAttribute(VertexDescription.Semantics.Z, 6, 0, 17);
+			poly.setAttribute(VertexDescription.Semantics.Z, 7, 0, 19);
+		}
 
-		poly.setAttribute(VertexDescription.Semantics.M, 0, 0, 2);
-		poly.setAttribute(VertexDescription.Semantics.M, 1, 0, 4);
-		poly.setAttribute(VertexDescription.Semantics.M, 2, 0, 8);
-		poly.setAttribute(VertexDescription.Semantics.M, 3, 0, 16);
-		poly.setAttribute(VertexDescription.Semantics.M, 4, 0, 32);
-		poly.setAttribute(VertexDescription.Semantics.M, 5, 0, 64);
-		poly.setAttribute(VertexDescription.Semantics.M, 6, 0, 128);
-		poly.setAttribute(VertexDescription.Semantics.M, 7, 0, 256);
+		if (m) {
+			poly.setAttribute(VertexDescription.Semantics.M, 0, 0, 2);
+			poly.setAttribute(VertexDescription.Semantics.M, 1, 0, 4);
+			poly.setAttribute(VertexDescription.Semantics.M, 2, 0, 8);
+			poly.setAttribute(VertexDescription.Semantics.M, 3, 0, 16);
+			poly.setAttribute(VertexDescription.Semantics.M, 4, 0, 32);
+			poly.setAttribute(VertexDescription.Semantics.M, 5, 0, 64);
+			poly.setAttribute(VertexDescription.Semantics.M, 6, 0, 128);
+			poly.setAttribute(VertexDescription.Semantics.M, 7, 0, 256);
+		}
 
-		poly.setAttribute(VertexDescription.Semantics.ID, 0, 0, 1);
-		poly.setAttribute(VertexDescription.Semantics.ID, 1, 0, 2);
-		poly.setAttribute(VertexDescription.Semantics.ID, 2, 0, 3);
-		poly.setAttribute(VertexDescription.Semantics.ID, 3, 0, 5);
-		poly.setAttribute(VertexDescription.Semantics.ID, 4, 0, 8);
-		poly.setAttribute(VertexDescription.Semantics.ID, 5, 0, 13);
-		poly.setAttribute(VertexDescription.Semantics.ID, 6, 0, 21);
-		poly.setAttribute(VertexDescription.Semantics.ID, 7, 0, 34);
+		if (id) {
+			poly.setAttribute(VertexDescription.Semantics.ID, 0, 0, 1);
+			poly.setAttribute(VertexDescription.Semantics.ID, 1, 0, 2);
+			poly.setAttribute(VertexDescription.Semantics.ID, 2, 0, 3);
+			poly.setAttribute(VertexDescription.Semantics.ID, 3, 0, 5);
+			poly.setAttribute(VertexDescription.Semantics.ID, 4, 0, 8);
+			poly.setAttribute(VertexDescription.Semantics.ID, 5, 0, 13);
+			poly.setAttribute(VertexDescription.Semantics.ID, 6, 0, 21);
+			poly.setAttribute(VertexDescription.Semantics.ID, 7, 0, 34);
+		}
 
 		return poly;
 	}
