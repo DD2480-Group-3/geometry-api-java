@@ -10,14 +10,15 @@ description.jardesc
 *.bak
 *.properties
 *.zip
+*.log
+*.bc
 
 # Intellij project files
 *.iml
 *.ipr
 *.iws
 .idea/
-.log
-.bc
+
 
 # Eclipse project files
 .settings/
