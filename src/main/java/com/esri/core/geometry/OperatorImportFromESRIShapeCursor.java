@@ -65,206 +65,262 @@ class OperatorImportFromESRIShapeCursor extends GeometryCursor {
 	private Geometry importFromESRIShape(ByteBuffer shapeBuffer) {
 		ByteOrder initialOrder = shapeBuffer.order();
 		shapeBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		BranchCover bCover = new BranchCover(35, "importFromESRIShape");
+		BranchCover bCover = new BranchCover(14, "importFromESRIShape");
 
 		try {
+			bCover.add(0);
+
 			// read type
 			int shapetype = shapeBuffer.getInt(0);
 
-			// Extract general type and modifiers
-			int generaltype;
-			int modifiers;
-			switch (shapetype & ShapeModifiers.ShapeBasicTypeMask) {
-			// Polygon
-			case ShapeType.ShapePolygon:
-				bCover.add(0);
-				generaltype = ShapeType.ShapeGeneralPolygon;
-				modifiers = 0;
-				break;
-			case ShapeType.ShapePolygonZM:
+			//null geometry
+			if (shapetype == ShapeType.ShapeNull){
 				bCover.add(1);
-				generaltype = ShapeType.ShapeGeneralPolygon;
-				modifiers = ShapeModifiers.ShapeHasZs | ShapeModifiers.ShapeHasMs;
-				break;
-			case ShapeType.ShapePolygonM:
-				bCover.add(2);
-				generaltype = ShapeType.ShapeGeneralPolygon;
-				modifiers = ShapeModifiers.ShapeHasMs;
-				break;
-			case ShapeType.ShapePolygonZ:
-				bCover.add(3);
-				generaltype = ShapeType.ShapeGeneralPolygon;
-				modifiers = ShapeModifiers.ShapeHasZs;
-				break;
-			case ShapeType.ShapeGeneralPolygon:
-				bCover.add(4);
-				generaltype = ShapeType.ShapeGeneralPolygon;
-				modifiers = shapetype & ShapeModifiers.ShapeModifierMask;
-				break;
-
-			// Polyline
-			case ShapeType.ShapePolyline:
-				bCover.add(5);
-				generaltype = ShapeType.ShapeGeneralPolyline;
-				modifiers = 0;
-				break;
-			case ShapeType.ShapePolylineZM:
-				bCover.add(6);
-				generaltype = ShapeType.ShapeGeneralPolyline;
-				modifiers = ShapeModifiers.ShapeHasZs
-						| (int) ShapeModifiers.ShapeHasMs;
-				break;
-			case ShapeType.ShapePolylineM:
-				bCover.add(7);
-				generaltype = ShapeType.ShapeGeneralPolyline;
-				modifiers = ShapeModifiers.ShapeHasMs;
-				break;
-			case ShapeType.ShapePolylineZ:
-				bCover.add(8);
-				generaltype = ShapeType.ShapeGeneralPolyline;
-				modifiers = ShapeModifiers.ShapeHasZs;
-				break;
-			case ShapeType.ShapeGeneralPolyline:
-				bCover.add(9);
-				generaltype = ShapeType.ShapeGeneralPolyline;
-				modifiers = shapetype & ShapeModifiers.ShapeModifierMask;
-				break;
-
-			// MultiPoint
-			case ShapeType.ShapeMultiPoint:
-				bCover.add(10);
-				generaltype = ShapeType.ShapeGeneralMultiPoint;
-				modifiers = 0;
-				break;
-			case ShapeType.ShapeMultiPointZM:
-				bCover.add(11);
-				generaltype = ShapeType.ShapeGeneralMultiPoint;
-				modifiers = (int) ShapeModifiers.ShapeHasZs
-						| (int) ShapeModifiers.ShapeHasMs;
-				break;
-			case ShapeType.ShapeMultiPointM:
-				bCover.add(12);
-				generaltype = ShapeType.ShapeGeneralMultiPoint;
-				modifiers = ShapeModifiers.ShapeHasMs;
-				break;
-			case ShapeType.ShapeMultiPointZ:
-				bCover.add(13);
-				generaltype = ShapeType.ShapeGeneralMultiPoint;
-				modifiers = ShapeModifiers.ShapeHasZs;
-				break;
-			case ShapeType.ShapeGeneralMultiPoint:
-				bCover.add(14);
-				generaltype = ShapeType.ShapeGeneralMultiPoint;
-				modifiers = shapetype & ShapeModifiers.ShapeModifierMask;
-				break;
-
-			// Point
-			case ShapeType.ShapePoint:
-				bCover.add(15);
-				generaltype = ShapeType.ShapeGeneralPoint;
-				modifiers = 0;
-				break;
-			case ShapeType.ShapePointZM:
-				bCover.add(16);
-				generaltype = ShapeType.ShapeGeneralPoint;
-				modifiers = ShapeModifiers.ShapeHasZs
-						| (int) ShapeModifiers.ShapeHasMs;
-				break;
-			case ShapeType.ShapePointM:
-				bCover.add(17);
-				generaltype = ShapeType.ShapeGeneralPoint;
-				modifiers = ShapeModifiers.ShapeHasMs;
-				break;
-			case ShapeType.ShapePointZ:
-				bCover.add(18);
-				generaltype = ShapeType.ShapeGeneralPoint;
-				modifiers = ShapeModifiers.ShapeHasZs;
-				break;
-			case ShapeType.ShapeGeneralPoint:
-				bCover.add(19);
-				generaltype = ShapeType.ShapeGeneralPoint;
-				modifiers = shapetype & ShapeModifiers.ShapeModifierMask;
-				break;
-
-			// Null Geometry
-			case ShapeType.ShapeNull:
-				bCover.add(20);
 				bCover.saveResults();
 				return null;
-
-			default:
-				bCover.add(21);
-				bCover.saveResults();
-				throw new GeometryException("invalid shape type");
 			}
+
+			// Extract general type and modifiers
+			int generaltype = shapeGeneralType(shapetype);
+			int modifiers = shapeModifiers(shapetype);
 
 			switch (generaltype) {
 			case ShapeType.ShapeGeneralPolygon:
-				bCover.add(22);
+				bCover.add(2);
 				if (m_type != Geometry.GeometryType.Polygon
-						&& m_type != Geometry.GeometryType.Unknown
-						&& m_type != Geometry.GeometryType.Envelope){
-							bCover.add(23);
-							bCover.saveResults();
-							throw new GeometryException("invalid shape type");
-				} else{
-					bCover.add(24);
+					
+						&& geometryTypeCheck(m_type)){
+					bCover.add(3);
+					bCover.saveResults();
+					throw new GeometryException("invalid shape type");
+				} else {
+					bCover.add(4);
 				}
 				bCover.saveResults();
 				return importFromESRIShapeMultiPath(true, modifiers,
 						shapeBuffer);
 
 			case ShapeType.ShapeGeneralPolyline:
-				bCover.add(25);
+				bCover.add(5);
 				if (m_type != Geometry.GeometryType.Polyline
-						&& m_type != Geometry.GeometryType.Unknown
-						&& m_type != Geometry.GeometryType.Envelope){
-							bCover.add(26);
-							bCover.saveResults();
-							throw new GeometryException("invalid shape type");
+						&& geometryTypeCheck(m_type)){
+					bCover.add(6);
+					bCover.saveResults();
+					throw new GeometryException("invalid shape type");
 				} else {
-					bCover.add(27);
+					bCover.add(7);
 				}
-				bCover.saveResults();
+				bCover.saveResults();	
 				return importFromESRIShapeMultiPath(false, modifiers,
 						shapeBuffer);
 
 			case ShapeType.ShapeGeneralMultiPoint:
-				bCover.add(28);
+				bCover.add(8);
 				if (m_type != Geometry.GeometryType.MultiPoint
-						&& m_type != Geometry.GeometryType.Unknown
-						&& m_type != Geometry.GeometryType.Envelope){
-							bCover.add(29);
-							bCover.saveResults();
-							throw new GeometryException("invalid shape type");
-				} else {
-					bCover.add(30);
+						&& geometryTypeCheck(m_type)){
+					bCover.add(9);
+					bCover.saveResults();
+					throw new GeometryException("invalid shape type");
+				} else{
+					bCover.add(10);
 				}
-				bCover.saveResults();
+				bCover.saveResults();	
 				return importFromESRIShapeMultiPoint(modifiers, shapeBuffer);
 
 			case ShapeType.ShapeGeneralPoint:
-				bCover.add(31);
+				bCover.add(11);
 				if (m_type != Geometry.GeometryType.Point
 						&& m_type != Geometry.GeometryType.MultiPoint
-						&& m_type != Geometry.GeometryType.Unknown
-						&& m_type != Geometry.GeometryType.Envelope)
-						{
-							bCover.add(32);
-							bCover.saveResults();
-							throw new GeometryException("invalid shape type");
-				} else {
-					bCover.add(33);
+						&& geometryTypeCheck(m_type)){
+					bCover.add(12);
 					bCover.saveResults();
-					return importFromESRIShapePoint(modifiers, shapeBuffer);
-				}				
+					throw new GeometryException("invalid shape type");
+				} else {
+					bCover.add(13);
+				}
+				bCover.saveResults();
+				return importFromESRIShapePoint(modifiers, shapeBuffer);
 			}
 			bCover.saveResults();
 			return null;
 		} finally {
-			bCover.add(34);
+			bCover.saveResults();
 			shapeBuffer.order(initialOrder);
 		}
+	}
+
+	private boolean geometryTypeCheck(int m_type){
+
+		boolean conditional;
+
+		if (m_type != Geometry.GeometryType.Unknown
+				&& m_type != Geometry.GeometryType.Envelope){
+			conditional = true;
+		} else {
+			conditional = false;
+		}
+
+		return conditional;
+	}
+
+	private int shapeGeneralType(int shapetype){
+		int generaltype;
+		
+		switch (shapetype & ShapeModifiers.ShapeBasicTypeMask) {
+			// Polygon
+			case ShapeType.ShapePolygon:
+				generaltype = ShapeType.ShapeGeneralPolygon;
+				break;
+			case ShapeType.ShapePolygonZM:
+				generaltype = ShapeType.ShapeGeneralPolygon;
+				break;
+			case ShapeType.ShapePolygonM:
+				generaltype = ShapeType.ShapeGeneralPolygon;
+				break;
+			case ShapeType.ShapePolygonZ:
+				generaltype = ShapeType.ShapeGeneralPolygon;
+				break;
+			case ShapeType.ShapeGeneralPolygon:
+				generaltype = ShapeType.ShapeGeneralPolygon;
+				break;
+
+			// Polyline
+			case ShapeType.ShapePolyline:
+				generaltype = ShapeType.ShapeGeneralPolyline;
+				break;
+			case ShapeType.ShapePolylineZM:
+				generaltype = ShapeType.ShapeGeneralPolyline;
+				break;
+			case ShapeType.ShapePolylineM:
+				generaltype = ShapeType.ShapeGeneralPolyline;
+				break;
+			case ShapeType.ShapePolylineZ:
+				generaltype = ShapeType.ShapeGeneralPolyline;
+				break;
+			case ShapeType.ShapeGeneralPolyline:
+				generaltype = ShapeType.ShapeGeneralPolyline;
+				break;
+
+			// MultiPoint
+			case ShapeType.ShapeMultiPoint:
+				generaltype = ShapeType.ShapeGeneralMultiPoint;
+				break;
+			case ShapeType.ShapeMultiPointZM:
+				generaltype = ShapeType.ShapeGeneralMultiPoint;
+				break;
+			case ShapeType.ShapeMultiPointM:
+				generaltype = ShapeType.ShapeGeneralMultiPoint;
+				break;
+			case ShapeType.ShapeMultiPointZ:
+				generaltype = ShapeType.ShapeGeneralMultiPoint;
+				break;
+			case ShapeType.ShapeGeneralMultiPoint:
+				generaltype = ShapeType.ShapeGeneralMultiPoint;
+				break;
+
+			// Point
+			case ShapeType.ShapePoint:
+				generaltype = ShapeType.ShapeGeneralPoint;
+				break;
+			case ShapeType.ShapePointZM:
+				generaltype = ShapeType.ShapeGeneralPoint;
+				break;
+			case ShapeType.ShapePointM:
+				generaltype = ShapeType.ShapeGeneralPoint;
+				break;
+			case ShapeType.ShapePointZ:
+				generaltype = ShapeType.ShapeGeneralPoint;
+				break;
+			case ShapeType.ShapeGeneralPoint:
+				generaltype = ShapeType.ShapeGeneralPoint;
+				break;
+
+			default:
+				throw new GeometryException("invalid shape type");
+			}
+		return generaltype;
+	}
+
+	private int shapeModifiers(int shapetype){
+		int modifiers;
+
+		switch (shapetype & ShapeModifiers.ShapeBasicTypeMask) {
+			// Polygon
+			case ShapeType.ShapePolygon:
+				modifiers = 0;
+				break;
+			case ShapeType.ShapePolygonZM:
+				modifiers = ShapeModifiers.ShapeHasZs | ShapeModifiers.ShapeHasMs;
+				break;
+			case ShapeType.ShapePolygonM:
+				modifiers = ShapeModifiers.ShapeHasMs;
+				break;
+			case ShapeType.ShapePolygonZ:
+				modifiers = ShapeModifiers.ShapeHasZs;
+				break;
+			case ShapeType.ShapeGeneralPolygon:
+				modifiers = shapetype & ShapeModifiers.ShapeModifierMask;
+				break;
+
+			// Polyline
+			case ShapeType.ShapePolyline:
+				modifiers = 0;
+				break;
+			case ShapeType.ShapePolylineZM:
+				modifiers = ShapeModifiers.ShapeHasZs
+						| (int) ShapeModifiers.ShapeHasMs;
+				break;
+			case ShapeType.ShapePolylineM:
+				modifiers = ShapeModifiers.ShapeHasMs;
+				break;
+			case ShapeType.ShapePolylineZ:
+				modifiers = ShapeModifiers.ShapeHasZs;
+				break;
+			case ShapeType.ShapeGeneralPolyline:
+				modifiers = shapetype & ShapeModifiers.ShapeModifierMask;
+				break;
+
+			// MultiPoint
+			case ShapeType.ShapeMultiPoint:
+				modifiers = 0;
+				break;
+			case ShapeType.ShapeMultiPointZM:
+				modifiers = (int) ShapeModifiers.ShapeHasZs
+						| (int) ShapeModifiers.ShapeHasMs;
+				break;
+			case ShapeType.ShapeMultiPointM:
+				modifiers = ShapeModifiers.ShapeHasMs;
+				break;
+			case ShapeType.ShapeMultiPointZ:
+				modifiers = ShapeModifiers.ShapeHasZs;
+				break;
+			case ShapeType.ShapeGeneralMultiPoint:
+				modifiers = shapetype & ShapeModifiers.ShapeModifierMask;
+				break;
+
+			// Point
+			case ShapeType.ShapePoint:
+				modifiers = 0;
+				break;
+			case ShapeType.ShapePointZM:
+				modifiers = ShapeModifiers.ShapeHasZs
+						| (int) ShapeModifiers.ShapeHasMs;
+				break;
+			case ShapeType.ShapePointM:
+				modifiers = ShapeModifiers.ShapeHasMs;
+				break;
+			case ShapeType.ShapePointZ:
+				modifiers = ShapeModifiers.ShapeHasZs;
+				break;
+			case ShapeType.ShapeGeneralPoint:
+				modifiers = shapetype & ShapeModifiers.ShapeModifierMask;
+				break;
+
+			default:
+				throw new GeometryException("invalid shape type");
+			}
+
+		return modifiers;
 	}
 
 	private Geometry importFromESRIShapeMultiPath(boolean bPolygon,
