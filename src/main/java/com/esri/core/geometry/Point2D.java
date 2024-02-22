@@ -681,6 +681,9 @@ public final class Point2D implements Serializable{
 	}
 
 	private static Point2D calculateCenterFromThreePointsHelper_(Point2D from, Point2D mid_point, Point2D to) {
+		BranchCover bc = new BranchCover(5, "calculateCenterFromThreePointsHelper");
+		bc.add(0);
+		bc.saveResults();
 		assert(!mid_point.isEqual(to) && !mid_point.isEqual(from) && !from.isEqual(to));
 		ECoordinate mx = new ECoordinate(mid_point.x);
 		mx.sub(from.x);
@@ -698,7 +701,11 @@ public final class Point2D implements Serializable{
 		d.sub(tmp);
 
 		if (d.value() == 0.0) {
+			bc.add(1);
+			bc.saveResults();
 			return Point2D.construct(NumberUtils.NaN(), NumberUtils.NaN());
+		}else{
+			bc.add(2);
 		}
 
 		d.mul(2.0);
@@ -738,9 +745,14 @@ public final class Point2D implements Serializable{
 				+ Math.abs(mid_point.y) + Math.abs(to.y);
 
 		double tol = 1e-15;
-		if ((Math.abs(r1 - r2) <= base * tol && Math.abs(r1 - r3) <= base * tol))
+		if ((Math.abs(r1 - r2) <= base * tol && Math.abs(r1 - r3) <= base * tol)){
+			bc.add(3);
+			bc.saveResults();
 			return center;//returns center value for MP_value type or when calculated radius value for from - center, mid - center, and to - center are very close.
-
+		}else{
+			bc.add(4);
+		}
+		bc.saveResults();
 		return Point2D.construct(NumberUtils.NaN(), NumberUtils.NaN());
 	}
 
