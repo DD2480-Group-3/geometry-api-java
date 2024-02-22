@@ -77,17 +77,22 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 	@Override
 	public OGCStructure executeOGC(int importFlags, ByteBuffer wkbBuffer,
 			ProgressTracker progress_tracker) {
+        BranchCover bc = new BranchCover(13, "executeOGC");
 
 		ByteOrder initialOrder = wkbBuffer.order();
 
+            bc.add(0);
 		// read byte ordering
 		int byteOrder = wkbBuffer.get(0);
 
-		if (byteOrder == WkbByteOrder.wkbNDR)
+		if (byteOrder == WkbByteOrder.wkbNDR){
+            bc.add(1);
 			wkbBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		else
+        }
+		else{
+            bc.add(2);
 			wkbBuffer.order(ByteOrder.BIG_ENDIAN);
-
+        }
 		ArrayList<OGCStructure> stack = new ArrayList<OGCStructure>(0);
 		AttributeStreamOfInt32 numGeometries = new AttributeStreamOfInt32(0);
 		AttributeStreamOfInt32 indices = new AttributeStreamOfInt32(0);
@@ -104,15 +109,18 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 		boolean bHasMs = false;
 
 		try {
-
 			while (!stack.isEmpty()) {
+				bc.add(3);
 
 				if (indices.getLast() == numGeometries.getLast()) {
+					bc.add(4);
 					stack.remove(stack.size() - 1);
 					indices.removeLast();
 					numGeometries.removeLast();
 					continue;
-				}
+				} else {
+					bc.add(5);
+                }
 
 				OGCStructure last = stack.get(stack.size() - 1);
 				indices.write(indices.size() - 1, indices.getLast() + 1);
@@ -122,53 +130,45 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 				int ogcType;
 
 				// strip away attributes from type identifier
-
 				if (wkbType > 3000) {
+					bc.add(6);
 					ogcType = wkbType - 3000;
+					
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
 
-					if (bCheckConsistentAttributes) {
-						if (!bHasZs || !bHasMs)
-							throw new IllegalArgumentException();
-					} else {
-						bHasZs = true;
-						bHasMs = true;
-						bCheckConsistentAttributes = true;
-					}
 				} else if (wkbType > 2000) {
+					bc.add(7);
 					ogcType = wkbType - 2000;
 
-					if (bCheckConsistentAttributes) {
-						if (bHasZs || !bHasMs)
-							throw new IllegalArgumentException();
-					} else {
-						bHasZs = false;
-						bHasMs = true;
-						bCheckConsistentAttributes = true;
-					}
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
+
 				} else if (wkbType > 1000) {
+					bc.add(8);
 					ogcType = wkbType - 1000;
 
-					if (bCheckConsistentAttributes) {
-						if (!bHasZs || bHasMs)
-							throw new IllegalArgumentException();
-					} else {
-						bHasZs = true;
-						bHasMs = false;
-						bCheckConsistentAttributes = true;
-					}
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
+
 				} else {
+					bc.add(9);
 					ogcType = wkbType;
 
-					if (bCheckConsistentAttributes) {
-						if (bHasZs || bHasMs)
-							throw new IllegalArgumentException();
-					} else {
-						bHasZs = false;
-						bHasMs = false;
-						bCheckConsistentAttributes = true;
-					}
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
 				}
+
 				if (ogcType == 7) {
+					bc.add(10);
 					int count = wkbHelper.getInt(5);
 					wkbHelper.adjustment += 9;
 
@@ -180,6 +180,7 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 					indices.add(0);
 					numGeometries.add(count);
 				} else {
+					bc.add(11);
 					geometry = importFromWkb(importFlags,
 							Geometry.Type.Unknown, wkbHelper);
 					OGCStructure leaf = new OGCStructure();
@@ -189,8 +190,10 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 				}
 			}
 		} finally {
+        	bc.saveResults();
 			wkbBuffer.order(initialOrder);
 		}
+        bc.add(12);
 
 		return root;
 	}

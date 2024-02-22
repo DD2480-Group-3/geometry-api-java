@@ -24,11 +24,13 @@
 
 package com.esri.core.geometry;
 
-import com.esri.core.geometry.ogc.OGCGeometry;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import junit.framework.TestCase;
+
 import org.junit.Test;
+
+import com.esri.core.geometry.ogc.OGCGeometry;
+
+import junit.framework.TestCase;
 
 //import com.vividsolutions.jts.io.WKBReader;
 
@@ -116,4 +118,72 @@ public class TestWKBSupport extends TestCase {
 		OGCGeometry geomFromBinary = OGCGeometry.fromBinary(byteBuffer);
 		assertTrue(geometry.Equals(geomFromBinary));
 	}
+
+	//my test 1
+    @Test
+    public void testWKB4() throws Exception {
+		String multiPointWKT = "MULTIPOINT ((1 0))";
+		OGCGeometry geometry = OGCGeometry.fromText(multiPointWKT);
+		ByteBuffer byteBuffer = geometry.asBinary();
+		byteBuffer.put(1, (byte)1);
+		byteBuffer.put(2, (byte)7);
+		try {
+			OGCGeometry geomFromBinary = OGCGeometry.fromBinary(byteBuffer);
+			//just to prove that we actually have an exception.
+			assertEquals(1, 0);
+		} catch(Exception e) {
+			System.out.println(e.getMessage());
+			assertEquals(e.getMessage(), "invalid shape type");
+		}
+    }
+ 	//my test 2
+    @Test
+    public void testWKB5() throws Exception {
+		String multiPointWKT = "MULTIPOINT ((1 0))";
+		OGCGeometry geometry = OGCGeometry.fromText(multiPointWKT);
+		ByteBuffer byteBuffer = geometry.asBinary();
+		byteBuffer.put(1, (byte)1);
+		byteBuffer.put(2, (byte)9);
+		try {
+			OGCGeometry geomFromBinary = OGCGeometry.fromBinary(byteBuffer);
+			//just to prove that we actually have an exception.
+			assertEquals(1, 0);
+		} catch(Exception e) {
+			assertEquals(e.getMessage(), "invalid shape type");
+		}
+
+    }  
+ 	//my test 3
+    @Test
+    public void testWKB6() throws Exception {
+		String multiPointWKT = "GEOMETRYCOLLECTION (POLYGON ((3 0, 4 0, 4 1, 3 0)), POLYGON ((3 0, 4 0, 4 1, 3 0)))";
+		OGCGeometry geometry = OGCGeometry.fromText(multiPointWKT);
+		ByteBuffer byteBuffer = geometry.asBinary();
+		byteBuffer.put(10, (byte)1);
+		byteBuffer.put(11, (byte)7);
+		byte[] b = byteBuffer.array();
+		try {
+			OGCGeometry geomFromBinary = OGCGeometry.fromBinary(byteBuffer);
+			//just to prove that we actually have an exception.
+			assertEquals(1, 0);
+		} catch(Exception e) {
+			assertEquals(e.getMessage(), null);
+		}
+    } 
+    @Test
+    public void testWKB7() throws Exception {
+		String multiPointWKT = "GEOMETRYCOLLECTION (POLYGON ((3 0, 4 0, 4 1, 3 0)), POLYGON ((3 0, 4 0, 4 1, 3 0)))";
+		OGCGeometry geometry = OGCGeometry.fromText(multiPointWKT);
+		ByteBuffer byteBuffer = geometry.asBinary();
+		byteBuffer.put(10, (byte)1);
+		byteBuffer.put(11, (byte)9);
+		byte[] b = byteBuffer.array();
+		try {
+			OGCGeometry geomFromBinary = OGCGeometry.fromBinary(byteBuffer);
+			//just to prove that we actually have an exception.
+			assertEquals(1, 0);
+		} catch(Exception e) {
+			assertEquals(e.getMessage(), null);
+		}
+    } 
 }
