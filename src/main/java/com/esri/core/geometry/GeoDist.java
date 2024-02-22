@@ -126,7 +126,7 @@
 	 }
  
 	 // Helper method to compute geodesic dist in the case of a perfect sphere
-	 static private void geodesic_distance_perfect_sphere(double a, double e2, double lam1,
+	 static private void geodesic_distance_perfect_sphere(double a, double lam1,
 			 double phi1, double lam2, double phi2, PeDouble p_dist,
 			 PeDouble p_az12, PeDouble p_az21, double dlam){
  
@@ -250,7 +250,7 @@
  
 		 if (PE_ZERO(e2)) /* Sphere */
 		 {
-			 geodesic_distance_perfect_sphere(a,e2,lam1,phi1,lam2,phi2,p_dist,p_az12,p_az21, dlam);
+			 geodesic_distance_perfect_sphere(a,lam1,phi1,lam2,phi2,p_dist,p_az12,p_az21, dlam);
 			 return;
 		 }
  
