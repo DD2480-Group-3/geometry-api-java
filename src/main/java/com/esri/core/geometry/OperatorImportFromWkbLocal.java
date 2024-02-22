@@ -83,11 +83,12 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 		// read byte ordering
 		int byteOrder = wkbBuffer.get(0);
 
-		if (byteOrder == WkbByteOrder.wkbNDR)
+		if (byteOrder == WkbByteOrder.wkbNDR){
 			wkbBuffer.order(ByteOrder.LITTLE_ENDIAN);
-		else
+        }
+		else{
 			wkbBuffer.order(ByteOrder.BIG_ENDIAN);
-
+        }
 		ArrayList<OGCStructure> stack = new ArrayList<OGCStructure>(0);
 		AttributeStreamOfInt32 numGeometries = new AttributeStreamOfInt32(0);
 		AttributeStreamOfInt32 indices = new AttributeStreamOfInt32(0);
@@ -104,7 +105,6 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 		boolean bHasMs = false;
 
 		try {
-
 			while (!stack.isEmpty()) {
 
 				if (indices.getLast() == numGeometries.getLast()) {
@@ -112,7 +112,8 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 					indices.removeLast();
 					numGeometries.removeLast();
 					continue;
-				}
+				} else {
+                }
 
 				OGCStructure last = stack.get(stack.size() - 1);
 				indices.write(indices.size() - 1, indices.getLast() + 1);
@@ -122,52 +123,39 @@ class OperatorImportFromWkbLocal extends OperatorImportFromWkb {
 				int ogcType;
 
 				// strip away attributes from type identifier
-
 				if (wkbType > 3000) {
 					ogcType = wkbType - 3000;
+					
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
 
-					if (bCheckConsistentAttributes) {
-						if (!bHasZs || !bHasMs)
-							throw new IllegalArgumentException();
-					} else {
-						bHasZs = true;
-						bHasMs = true;
-						bCheckConsistentAttributes = true;
-					}
 				} else if (wkbType > 2000) {
 					ogcType = wkbType - 2000;
 
-					if (bCheckConsistentAttributes) {
-						if (bHasZs || !bHasMs)
-							throw new IllegalArgumentException();
-					} else {
-						bHasZs = false;
-						bHasMs = true;
-						bCheckConsistentAttributes = true;
-					}
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
+
 				} else if (wkbType > 1000) {
 					ogcType = wkbType - 1000;
 
-					if (bCheckConsistentAttributes) {
-						if (!bHasZs || bHasMs)
-							throw new IllegalArgumentException();
-					} else {
-						bHasZs = true;
-						bHasMs = false;
-						bCheckConsistentAttributes = true;
-					}
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
+
 				} else {
 					ogcType = wkbType;
 
-					if (bCheckConsistentAttributes) {
-						if (bHasZs || bHasMs)
-							throw new IllegalArgumentException();
-					} else {
-						bHasZs = false;
-						bHasMs = false;
-						bCheckConsistentAttributes = true;
-					}
+					boolean[] bAttributes = RefactorExecuteOGC.bCheckConsistentAttributes(wkbType,bCheckConsistentAttributes,bHasZs,bHasMs);
+					bHasZs = bAttributes[0];
+					bHasMs = bAttributes[1];
+					bCheckConsistentAttributes = bAttributes[2];
 				}
+
 				if (ogcType == 7) {
 					int count = wkbHelper.getInt(5);
 					wkbHelper.adjustment += 9;

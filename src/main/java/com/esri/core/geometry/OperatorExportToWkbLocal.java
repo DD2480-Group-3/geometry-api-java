@@ -1016,6 +1016,7 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 
 	private static int exportEnvelopeToWKB(int exportFlags, Envelope envelope,
 			ByteBuffer wkbBuffer) {
+		
 		boolean bExportZs = envelope
 				.hasAttribute(VertexDescription.Semantics.Z)
 				&& (exportFlags & WkbExportFlags.wkbExportStripZs) == 0;
@@ -1032,8 +1033,8 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 		// get size for buffer
 		int size = 0;
 		if ((exportFlags & WkbExportFlags.wkbExportMultiPolygon) != 0
-				|| partCount == 0)
-			size += 1 /* byte order */+ 4 /* wkbType */+ 4 /* numPolygons */;
+				|| partCount == 0) 
+			size += 1 /* byte order */+ 4 /* wkbType */+ 4 /* numPolygons */; 
 
 		size += partCount
 				* (1 /* byte order */+ 4 /* wkbType */+ 4/* numRings */)
@@ -1042,19 +1043,22 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 																		 * coordinates
 																		 */);
 
-		if (bExportZs)
-			size += (point_count * 8 /* zs */);
+		if (bExportZs){
+			size += (point_count * 8 /* zs */);}
 		if (bExportMs)
-			size += (point_count * 8 /* ms */);
-
+			{
+			size += (point_count * 8 /* ms */);}
 		if (size >= NumberUtils.intMax())
-			throw new GeometryException("invalid call");
+			{
 
+			throw new GeometryException("invalid call");}
 		if (wkbBuffer == null)
-			return size;
+			{
+				
+			return size;}
 		else if (wkbBuffer.capacity() < size)
-			throw new GeometryException("buffer is too small");
-
+			{
+			throw new GeometryException("buffer is too small");}
 		int offset = 0;
 
 		byte byteOrder = (byte) (wkbBuffer.order() == ByteOrder.LITTLE_ENDIAN ? WkbByteOrder.wkbNDR
@@ -1065,79 +1069,28 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 		if (!bExportZs && !bExportMs) {
 			type = WkbGeometryType.wkbPolygon;
 
-			if ((exportFlags & WkbExportFlags.wkbExportMultiPolygon) != 0) {
-				wkbBuffer.put(offset, byteOrder);
-				offset += 1;
-				wkbBuffer.putInt(offset, WkbGeometryType.wkbMultiPolygon);
-				offset += 4;
-				wkbBuffer.putInt(offset, (int) partCount);
-				offset += 4;
-			} else if (partCount == 0) {
-				wkbBuffer.put(offset, byteOrder);
-				offset += 1;
-				wkbBuffer.putInt(offset, WkbGeometryType.wkbPolygon);
-				offset += 4;
-				wkbBuffer.putInt(offset, 0);
-				offset += 4;
-			}
+			offset = checkFlagsAndAttribute(exportFlags, wkbBuffer, offset, byteOrder, partCount, 0);
+
 		} else if (bExportZs && !bExportMs) {
 			type = WkbGeometryType.wkbPolygonZ;
 
-			if ((exportFlags & WkbExportFlags.wkbExportPolygon) != 0) {
-				wkbBuffer.put(offset, byteOrder);
-				offset += 1;
-				wkbBuffer.putInt(offset, WkbGeometryType.wkbMultiPolygonZ);
-				offset += 4;
-				wkbBuffer.putInt(offset, partCount);
-				offset += 4;
-			} else if (partCount == 0) {
-				wkbBuffer.put(offset, byteOrder);
-				offset += 1;
-				wkbBuffer.putInt(offset, WkbGeometryType.wkbPolygonZ);
-				offset += 4;
-				wkbBuffer.putInt(offset, 0);
-				offset += 4;
-			}
+			offset = checkFlagsAndAttribute(exportFlags, wkbBuffer, offset, byteOrder, partCount, 1);
+
 		} else if (bExportMs && !bExportZs) {
 			type = WkbGeometryType.wkbPolygonM;
 
-			if ((exportFlags & WkbExportFlags.wkbExportMultiPolygon) != 0) {
-				wkbBuffer.put(offset, byteOrder);
-				offset += 1;
-				wkbBuffer.putInt(offset, WkbGeometryType.wkbMultiPolygonM);
-				offset += 4;
-				wkbBuffer.putInt(offset, partCount);
-				offset += 4;
-			} else if (partCount == 0) {
-				wkbBuffer.put(offset, byteOrder);
-				offset += 1;
-				wkbBuffer.putInt(offset, WkbGeometryType.wkbPolygonM);
-				offset += 4;
-				wkbBuffer.putInt(offset, 0);
-				offset += 4;
-			}
+			offset = checkFlagsAndAttribute(exportFlags, wkbBuffer, offset, byteOrder, partCount, 2);
+
 		} else {
 			type = WkbGeometryType.wkbPolygonZM;
 
-			if ((exportFlags & WkbExportFlags.wkbExportMultiPolygon) != 0) {
-				wkbBuffer.put(offset, byteOrder);
-				offset += 1;
-				wkbBuffer.putInt(offset, WkbGeometryType.wkbMultiPolygonZM);
-				offset += 4;
-				wkbBuffer.putInt(offset, partCount);
-				offset += 4;
-			} else if (partCount == 0) {
-				wkbBuffer.put(offset, byteOrder);
-				offset += 1;
-				wkbBuffer.putInt(offset, WkbGeometryType.wkbPolygonZM);
-				offset += 4;
-				wkbBuffer.putInt(offset, 0);
-				offset += 4;
-			}
+			offset = checkFlagsAndAttribute(exportFlags, wkbBuffer, offset, byteOrder, partCount, 3);
+
 		}
 
 		if (partCount == 0)
-			return offset;
+			{
+			return offset;}
 
 		// write byte order
 		wkbBuffer.put(offset, byteOrder);
@@ -1160,90 +1113,103 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 
 		Envelope1D z_interval = null;
 		if (bExportZs)
+			{
 			z_interval = envelope.queryInterval(VertexDescription.Semantics.Z,
-					0);
+					0);}
 
 		Envelope1D mInterval = null;
 		if (bExportMs)
+			{
 			mInterval = envelope
-					.queryInterval(VertexDescription.Semantics.M, 0);
-
+					.queryInterval(VertexDescription.Semantics.M, 0);}
 		wkbBuffer.putDouble(offset, env.xmin);
 		offset += 8;
 		wkbBuffer.putDouble(offset, env.ymin);
 		offset += 8;
 
-		if (bExportZs) {
-			wkbBuffer.putDouble(offset, z_interval.vmin);
-			offset += 8;
-		}
-
-		if (bExportMs) {
-			wkbBuffer.putDouble(offset, mInterval.vmin);
-			offset += 8;
-		}
+		offset = addOffset(offset, bExportZs, bExportMs, wkbBuffer, z_interval, mInterval, 0);
 
 		wkbBuffer.putDouble(offset, env.xmax);
 		offset += 8;
 		wkbBuffer.putDouble(offset, env.ymin);
 		offset += 8;
 
-		if (bExportZs) {
-			wkbBuffer.putDouble(offset, z_interval.vmax);
-			offset += 8;
-		}
-
-		if (bExportMs) {
-			wkbBuffer.putDouble(offset, mInterval.vmax);
-			offset += 8;
-		}
+		offset = addOffset(offset, bExportZs, bExportMs, wkbBuffer, z_interval, mInterval, 1);
 
 		wkbBuffer.putDouble(offset, env.xmax);
 		offset += 8;
 		wkbBuffer.putDouble(offset, env.ymax);
 		offset += 8;
 
-		if (bExportZs) {
-			wkbBuffer.putDouble(offset, z_interval.vmin);
-			offset += 8;
-		}
-
-		if (bExportMs) {
-			wkbBuffer.putDouble(offset, mInterval.vmin);
-			offset += 8;
-		}
+		offset = addOffset(offset, bExportZs, bExportMs, wkbBuffer, z_interval, mInterval,0);
 
 		wkbBuffer.putDouble(offset, env.xmin);
 		offset += 8;
 		wkbBuffer.putDouble(offset, env.ymax);
 		offset += 8;
 
-		if (bExportZs) {
-			wkbBuffer.putDouble(offset, z_interval.vmax);
-			offset += 8;
-		}
-
-		if (bExportMs) {
-			wkbBuffer.putDouble(offset, mInterval.vmax);
-			offset += 8;
-		}
+		offset = addOffset(offset, bExportZs, bExportMs, wkbBuffer, z_interval, mInterval, 1);
 
 		wkbBuffer.putDouble(offset, env.xmin);
 		offset += 8;
 		wkbBuffer.putDouble(offset, env.ymin);
 		offset += 8;
 
-		if (bExportZs) {
-			wkbBuffer.putDouble(offset, z_interval.vmin);
-			offset += 8;
-		}
-
-		if (bExportMs) {
-			wkbBuffer.putDouble(offset, mInterval.vmin);
-			offset += 8;
-		}
+		offset = addOffset(offset, bExportZs, bExportMs, wkbBuffer, z_interval, mInterval,0);
 
 		return offset;
 	}
+
+	private static int checkFlagsAndAttribute(int exportFlags, ByteBuffer wkbBuffer,int offset, byte byteOrder, int partCount, int type) {
+		if ((exportFlags & WkbExportFlags.wkbExportMultiPolygon) != 0) {
+			wkbBuffer.put(offset, byteOrder);
+			offset += 1;
+			if(type == 3) wkbBuffer.putInt(offset, WkbGeometryType.wkbMultiPolygonZM);
+			else if(type == 2) wkbBuffer.putInt(offset, WkbGeometryType.wkbMultiPolygonM);
+			else if(type == 1) wkbBuffer.putInt(offset, WkbGeometryType.wkbMultiPolygonZ);
+			else wkbBuffer.putInt(offset, WkbGeometryType.wkbMultiPolygon);
+			offset += 4;
+			wkbBuffer.putInt(offset, partCount);
+			offset += 4;
+		} else if (partCount == 0) {
+			wkbBuffer.put(offset, byteOrder);
+			offset += 1;
+			if(type == 3) wkbBuffer.putInt(offset, WkbGeometryType.wkbPolygonZM);
+			else if(type == 2) wkbBuffer.putInt(offset, WkbGeometryType.wkbPolygonM);
+			else if(type == 1) wkbBuffer.putInt(offset, WkbGeometryType.wkbPolygonZ);
+			else wkbBuffer.putInt(offset, WkbGeometryType.wkbPolygon);
+			offset += 4;
+			wkbBuffer.putInt(offset, 0);
+			offset += 4;
+		}
+		return offset;
+	}
+	/**
+	 * Function to add offset and add to the byteBuffer object. Used for reducing complexity in exportEnvelopeToWKB function.
+	 * @param offset
+	 * @param bExportZs
+	 * @param bExportMs
+	 * @param wkbBuffer
+	 * @param z_interval
+	 * @param mInterval
+	 * @param minOrMax
+	 * @return
+	 */
+	private static int addOffset(int offset, boolean bExportZs, boolean bExportMs, ByteBuffer wkbBuffer, Envelope1D z_interval, Envelope1D mInterval, int minOrMax) {
+		
+		if (bExportZs) {
+			if(minOrMax==0) wkbBuffer.putDouble(offset, z_interval.vmin);
+			else wkbBuffer.putDouble(offset, z_interval.vmax);
+			offset += 8;
+		}
+		if (bExportMs) {
+			if(minOrMax==0) wkbBuffer.putDouble(offset, mInterval.vmin);
+			else wkbBuffer.putDouble(offset, mInterval.vmax);
+
+			offset += 8;
+		}
+		return offset;
+	}
+
 
 }
