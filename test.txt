@@ -1237,7 +1237,10 @@
        4      3     47      1       5 GeoDist::lam_delta@56-60@.\src\main\java\com\esri\core\geometry\GeoDist.java
        8      2     75      2       9 GeoDist::lam_phi_reduction@62-70@.\src\main\java\com\esri\core\geometry\GeoDist.java
        8      1    105      2      22 GeoDist::q90@72-93@.\src\main\java\com\esri\core\geometry\GeoDist.java
-     401     55   3043      9     507 GeoDist::geodesic_distance_ngs@95-601@.\src\main\java\com\esri\core\geometry\GeoDist.java
+       3      2     22      2       3 GeoDist::setPeDouble@95-97@.\src\main\java\com\esri\core\geometry\GeoDist.java
+      22      4    194     10      27 GeoDist::geodesic_distance_antipodal@100-126@.\src\main\java\com\esri\core\geometry\GeoDist.java
+      39      8    351     10      42 GeoDist::geodesic_distance_perfect_sphere@129-170@.\src\main\java\com\esri\core\geometry\GeoDist.java
+     215     32   1874      9     308 GeoDist::geodesic_distance_ngs@172-479@.\src\main\java\com\esri\core\geometry\GeoDist.java
        8      2     51      1      10 GeoJsonCrsTables::getWkidFromCrsShortForm@29-38@.\src\main\java\com\esri\core\geometry\GeoJsonCrsTables.java
       12      3     73      1      27 GeoJsonCrsTables::getWkidFromCrsName@40-66@.\src\main\java\com\esri\core\geometry\GeoJsonCrsTables.java
        6      2     38      1       7 GeoJsonCrsTables::getWkidFromCrsOgcUrn@68-74@.\src\main\java\com\esri\core\geometry\GeoJsonCrsTables.java
@@ -2225,7 +2228,9 @@
      202     48   1370      3     253 OperatorExportToWkbLocal::exportPolylineToWKB@375-627@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
      177     38   1198      3     213 OperatorExportToWkbLocal::exportMultiPointToWKB@629-841@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
      144     30    994      3     173 OperatorExportToWkbLocal::exportPointToWKB@843-1015@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
-     279     40   1696      3     324 OperatorExportToWkbLocal::exportEnvelopeToWKB@1017-1340@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
+     128     22    960      3     172 OperatorExportToWkbLocal::exportEnvelopeToWKB@1017-1188@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
+      24      9    238      6      24 OperatorExportToWkbLocal::checkFlagsAndAttribute@1190-1213@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
+      13      5    106      7      15 OperatorExportToWkbLocal::addOffset@1225-1239@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
        3      1     10      0       3 OperatorExportToWkt::getType@30-32@.\src\main\java\com\esri\core\geometry\OperatorExportToWkt.java
        4      1     22      0       4 OperatorExportToWkt::local@37-40@.\src\main\java\com\esri\core\geometry\OperatorExportToWkt.java
        6      1     37      3       7 OperatorExportToWktLocal::execute@28-34@.\src\main\java\com\esri\core\geometry\OperatorExportToWktLocal.java
@@ -2297,10 +2302,13 @@
        9      2     43      3      10 OperatorImportFromESRIShapeCursor::OperatorImportFromESRIShapeCursor@39-48@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
        8      2     39      0       8 OperatorImportFromESRIShapeCursor::next@51-58@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
        3      1      8      0       3 OperatorImportFromESRIShapeCursor::getGeometryID@61-63@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
-     186     39   1036      1     204 OperatorImportFromESRIShapeCursor::importFromESRIShape@65-268@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
-     322     87   2226      3     422 OperatorImportFromESRIShapeCursor::importFromESRIShapeMultiPath@270-691@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
-     184     46   1238      2     222 OperatorImportFromESRIShapeCursor::importFromESRIShapeMultiPoint@693-914@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
-     123     26    821      2     150 OperatorImportFromESRIShapeCursor::importFromESRIShapePoint@916-1065@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+      74     15    433      1      86 OperatorImportFromESRIShapeCursor::importFromESRIShape@65-150@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+      10      3     44      1      13 OperatorImportFromESRIShapeCursor::geometryTypeCheck@152-164@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+      68     21    292      1      77 OperatorImportFromESRIShapeCursor::shapeGeneralType@166-242@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+      71     21    320      1      81 OperatorImportFromESRIShapeCursor::shapeModifiers@244-324@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+     322     87   2226      3     422 OperatorImportFromESRIShapeCursor::importFromESRIShapeMultiPath@326-747@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+     184     46   1238      2     222 OperatorImportFromESRIShapeCursor::importFromESRIShapeMultiPoint@749-970@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+     123     26    821      2     150 OperatorImportFromESRIShapeCursor::importFromESRIShapePoint@972-1121@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
        5      1     30      3       5 OperatorImportFromESRIShapeLocal::execute@35-39@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeLocal.java
        8      1     43      3       9 OperatorImportFromESRIShapeLocal::execute@42-50@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeLocal.java
        3      1     10      0       3 OperatorImportFromGeoJson::getType@29-31@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJson.java
@@ -2316,25 +2324,27 @@
        6      2     26      2       6 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::checkInvalid@187-192@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
        9      2     34      2      10 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::checkInvalid@194-203@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
        8      2     31      1       9 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::checkIsUnknownShape@205-213@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     158     29    945      6     298 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importFromGeoJsonImpl@215-512@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     131     32    601      2     162 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::import_coordinates_@524-685@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      26      5    163      1      33 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::readCoordinateAsPoint_@687-719@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      76     13    383      1      85 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::addCoordinate_@721-805@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      11      3     56      0      12 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::addPath_@807-818@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      13      3     66      1      14 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::addPathFlag_@820-833@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      15      4     70      1      15 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::readDouble_@835-849@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      20      6     89      1      24 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::isDouble_@851-874@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     120     35    544      2     131 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createGeometry_@877-1007@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      58     12    382      0      73 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createPolygonFromStreams_@1009-1081@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      37      7    215      0      45 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createPolylineFromStreams_@1083-1127@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      21      3    132      0      25 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createMultiPointFromStreams_@1129-1153@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     117     20    570      1     133 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::checkPathPointCountsForMultiPath_@1155-1287@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      40      3     99      6      42 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::insertIntoAdjustedStreams_@1289-1330@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     155     46    910      2     230 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importSpatialReferenceFromCrs@1332-1561@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      18      4    102      2      38 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importSpatialReferenceFromCrsUrn_@1564-1601@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-       8      2     46      1      10 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::getCrsIdentifier_@1603-1612@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      11      1     30      3      11 OperatorImportFromGeoJsonLocal::executeOGC@1616-1626@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-      21      1    102      3      23 OperatorImportFromGeoJsonLocal::executeOGC@1628-1650@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+       3      4     25      4       3 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::ANDs@214-216@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+       3      3     20      3       3 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::ANDs@217-219@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     158     24    949      6     219 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importFromGeoJsonImpl@223-441@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     131     32    601      2     162 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::import_coordinates_@453-614@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      26      5    163      1      33 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::readCoordinateAsPoint_@616-648@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      76     13    383      1      85 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::addCoordinate_@650-734@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      11      3     56      0      12 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::addPath_@736-747@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      13      3     66      1      14 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::addPathFlag_@749-762@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      15      4     70      1      15 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::readDouble_@764-778@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      20      6     89      1      24 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::isDouble_@780-803@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     120     35    544      2     131 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createGeometry_@806-936@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      58     12    382      0      73 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createPolygonFromStreams_@938-1010@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      37      7    215      0      45 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createPolylineFromStreams_@1012-1056@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      21      3    132      0      25 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createMultiPointFromStreams_@1058-1082@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     117     20    570      1     133 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::checkPathPointCountsForMultiPath_@1084-1216@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      40      3     99      6      42 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::insertIntoAdjustedStreams_@1218-1259@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     155     46    910      2     230 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importSpatialReferenceFromCrs@1261-1490@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      18      4    102      2      38 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importSpatialReferenceFromCrsUrn_@1493-1530@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+       8      2     46      1      10 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::getCrsIdentifier_@1532-1541@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      11      1     30      3      11 OperatorImportFromGeoJsonLocal::executeOGC@1545-1555@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      21      1    102      3      23 OperatorImportFromGeoJsonLocal::executeOGC@1557-1579@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
        3      1     10      0       3 OperatorImportFromJson::getType@32-34@.\src\main\java\com\esri\core\geometry\OperatorImportFromJson.java
        4      1     22      0       4 OperatorImportFromJson::local@57-60@.\src\main\java\com\esri\core\geometry\OperatorImportFromJson.java
        7      2     35      2       8 OperatorImportFromJsonCursor::OperatorImportFromJsonCursor@37-44@.\src\main\java\com\esri\core\geometry\OperatorImportFromJsonCursor.java
@@ -2360,12 +2370,12 @@
        3      1     17      1       3 OperatorImportFromWkbLocal::WkbHelper::getInt@42-44@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
        3      1     17      1       3 OperatorImportFromWkbLocal::WkbHelper::getDouble@46-48@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
       15      2     96      4      21 OperatorImportFromWkbLocal::execute@55-75@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-      98     20    596      3     119 OperatorImportFromWkbLocal::executeOGC@78-196@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-     144     73   1272      3     171 OperatorImportFromWkbLocal::importFromWkb@198-368@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-     271     81   1773      5     352 OperatorImportFromWkbLocal::importFromWkbPolygon@370-721@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-     137     28    845      5     182 OperatorImportFromWkbLocal::importFromWkbPolyline@723-904@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-      76     16    463      4     104 OperatorImportFromWkbLocal::importFromWkbMultiPoint@906-1009@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-      36      8    207      4      48 OperatorImportFromWkbLocal::importFromWkbPoint@1011-1058@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+     100      8    731      3     122 OperatorImportFromWkbLocal::executeOGC@78-199@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+     144     73   1272      3     171 OperatorImportFromWkbLocal::importFromWkb@201-371@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+     271     81   1773      5     352 OperatorImportFromWkbLocal::importFromWkbPolygon@373-724@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+     137     28    845      5     182 OperatorImportFromWkbLocal::importFromWkbPolyline@726-907@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+      76     16    463      4     104 OperatorImportFromWkbLocal::importFromWkbMultiPoint@909-1012@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+      36      8    207      4      48 OperatorImportFromWkbLocal::importFromWkbPoint@1014-1061@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
        3      1     10      0       3 OperatorImportFromWkt::getType@30-32@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkt.java
        4      1     22      0       4 OperatorImportFromWkt::local@53-56@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkt.java
        6      1     46      4       6 OperatorImportFromWktLocal::execute@30-35@.\src\main\java\com\esri\core\geometry\OperatorImportFromWktLocal.java
@@ -3014,6 +3024,7 @@
        3      1     10      0       3 RasterizedGeometry2DImpl::getRasterSize@497-499@.\src\main\java\com\esri\core\geometry\RasterizedGeometry2DImpl.java
       54      4    399      1      69 RasterizedGeometry2DImpl::dbgSaveToBitmap@502-570@.\src\main\java\com\esri\core\geometry\RasterizedGeometry2DImpl.java
        8      5     64      0       8 RasterizedGeometry2DImpl::estimateMemorySize@573-580@.\src\main\java\com\esri\core\geometry\RasterizedGeometry2DImpl.java
+      48     16    224      4      51 RefactorExecuteOGC::bCheckConsistentAttributes@5-55@.\src\main\java\com\esri\core\geometry\RefactorExecuteOGC.java
      226     53   1444      5     285 RelationalOperations::relate@42-326@.\src\main\java\com\esri\core\geometry\RelationalOperations.java
       41     11    245      5      53 RelationalOperations::relate@331-383@.\src\main\java\com\esri\core\geometry\RelationalOperations.java
       35      9    206      5      45 RelationalOperations::relate@387-431@.\src\main\java\com\esri\core\geometry\RelationalOperations.java
@@ -3994,7 +4005,7 @@
        8      1     64      3       8 RandomCoordinateGenerator::RandomCoordinateGenerator@88-95@.\src\test\java\com\esri\core\geometry\RandomCoordinateGenerator.java
        9      2     41      0      10 RandomCoordinateGenerator::GetRandomCoord@97-106@.\src\test\java\com\esri\core\geometry\RandomCoordinateGenerator.java
       13      5    109      2      13 RandomCoordinateGenerator::_snapClip@108-120@.\src\test\java\com\esri\core\geometry\RandomCoordinateGenerator.java
-       6      1     37      1       6 ResultPrinter::main@6-11@.\src\test\java\com\esri\core\geometry\ResultPrinter.java
+       7      1     44      1       7 ResultPrinter::main@6-12@.\src\test\java\com\esri\core\geometry\ResultPrinter.java
       36      1    413      0      37 TestAttributes::testPoint@35-71@.\src\test\java\com\esri\core\geometry\TestAttributes.java
       44      1    708      0      49 TestAttributes::testEnvelope@74-122@.\src\test\java\com\esri\core\geometry\TestAttributes.java
       43      1    616      0      49 TestAttributes::testLine@125-173@.\src\test\java\com\esri\core\geometry\TestAttributes.java
@@ -4676,11 +4687,15 @@
        3      1     13      0       3 TestWkbImportOnPostgresST::setUp@37-39@.\src\test\java\com\esri\core\geometry\TestWkbImportOnPostgresST.java
        3      1     13      0       3 TestWkbImportOnPostgresST::tearDown@42-44@.\src\test\java\com\esri\core\geometry\TestWkbImportOnPostgresST.java
       24      4    157      0      25 TestWkbImportOnPostgresST::testWkbImportOnPostgresST@47-71@.\src\test\java\com\esri\core\geometry\TestWkbImportOnPostgresST.java
-       3      1     13      0       3 TestWKBSupport::setUp@37-39@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
-       3      1     13      0       3 TestWKBSupport::tearDown@42-44@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
-      14      1    133      0      23 TestWKBSupport::testWKB@47-69@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
-      18      1    178      0      38 TestWKBSupport::testWKB2@72-109@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
-       7      1     51      0       7 TestWKBSupport::testWKB3@112-118@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+       3      1     13      0       3 TestWKBSupport::setUp@39-41@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+       3      1     13      0       3 TestWKBSupport::tearDown@44-46@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+      14      1    133      0      23 TestWKBSupport::testWKB@49-71@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+      18      1    178      0      38 TestWKBSupport::testWKB2@74-111@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+       7      1     51      0       7 TestWKBSupport::testWKB3@114-120@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+      14      2    106      0      15 TestWKBSupport::testWKB4@124-138@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+      13      2     93      0      15 TestWKBSupport::testWKB5@141-155@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+      14      2    104      0      15 TestWKBSupport::testWKB6@158-172@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+      14      2    104      0      15 TestWKBSupport::testWKB7@174-188@.\src\test\java\com\esri\core\geometry\TestWKBSupport.java
       10      1    102      0      11 TestWkid::test@34-44@.\src\test\java\com\esri\core\geometry\TestWkid.java
        7      1     61      0       7 TestWkid::test_80@48-54@.\src\test\java\com\esri\core\geometry\TestWkid.java
       87      1    771      0     128 TestWktParser::testGeometryCollection@35-162@.\src\test\java\com\esri\core\geometry\TestWktParser.java
@@ -4958,7 +4973,7 @@
        3      1     10      2       3 focus@306-308@.\target\apidocs\search.js
       41     13    334      2      41 select@312-352@.\target\apidocs\search.js
       14      1     53      0      62 (anonymous)@293-354@.\target\apidocs\search.js
-336 file analyzed.
+337 file analyzed.
 ==============================================================
 NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
 --------------------------------------------------------------
@@ -5010,7 +5025,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      63      27.0     6.0      202.0         2     .\src\main\java\com\esri\core\geometry\EnvSrlzr.java
      64      26.0     6.5      175.5         2     .\src\main\java\com\esri\core\geometry\GenericGeometrySerializer.java
       8       0.0     0.0        0.0         0     .\src\main\java\com\esri\core\geometry\GeodeticCurveType.java
-    442      54.2     8.6      423.2         8     .\src\main\java\com\esri\core\geometry\GeoDist.java
+    320      28.4     5.5      253.1        11     .\src\main\java\com\esri\core\geometry\GeoDist.java
     106      14.6     4.1      103.4         7     .\src\main\java\com\esri\core\geometry\GeoJsonCrsTables.java
      27       0.0     0.0        0.0         0     .\src\main\java\com\esri\core\geometry\GeoJsonExportFlags.java
       7       0.0     0.0        0.0         0     .\src\main\java\com\esri\core\geometry\GeoJsonImportFlags.java
@@ -5097,7 +5112,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
     335      27.0     7.2      195.0        12     .\src\main\java\com\esri\core\geometry\OperatorExportToJsonCursor.java
      20       4.3     1.0       28.7         3     .\src\main\java\com\esri\core\geometry\OperatorExportToJsonLocal.java
      17       3.5     1.0       16.0         2     .\src\main\java\com\esri\core\geometry\OperatorExportToWkb.java
-   1079     134.0    29.2      897.2         8     .\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
+    965      95.8    23.0      678.6        10     .\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
      14       3.5     1.0       16.0         2     .\src\main\java\com\esri\core\geometry\OperatorExportToWkt.java
     695      24.7     7.2      180.8        28     .\src\main\java\com\esri\core\geometry\OperatorExportToWktLocal.java
       6       0.0     0.0        0.0         0     .\src\main\java\com\esri\core\geometry\OperatorFactory.java
@@ -5114,15 +5129,15 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      14       3.5     1.0       17.0         2     .\src\main\java\com\esri\core\geometry\OperatorGeodeticLength.java
       8       4.0     1.0       23.0         1     .\src\main\java\com\esri\core\geometry\OperatorGeodeticLengthLocal.java
      17       3.5     1.0       16.0         2     .\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShape.java
-    848     119.3    29.0      773.0         7     .\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+    885      87.2    22.4      546.4        10     .\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
      19       6.5     1.0       36.5         2     .\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeLocal.java
      13       3.0     1.0       16.0         2     .\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJson.java
-   1225      39.5     8.3      198.9        30     .\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+   1231      37.2     7.8      188.0        32     .\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
      16       3.5     1.0       16.0         2     .\src\main\java\com\esri\core\geometry\OperatorImportFromJson.java
     439      30.6    12.4      215.5        14     .\src\main\java\com\esri\core\geometry\OperatorImportFromJsonCursor.java
      16       3.3     1.0       25.3         3     .\src\main\java\com\esri\core\geometry\OperatorImportFromJsonLocal.java
      17       3.5     1.0       16.0         2     .\src\main\java\com\esri\core\geometry\OperatorImportFromWkb.java
-    799      78.7    23.1      530.1        10     .\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+    801      78.9    21.9      543.6        10     .\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
      16       3.5     1.0       16.0         2     .\src\main\java\com\esri\core\geometry\OperatorImportFromWkt.java
     473      33.4     8.0      239.0        14     .\src\main\java\com\esri\core\geometry\OperatorImportFromWktLocal.java
     579      18.1     4.8      123.3        31     .\src\main\java\com\esri\core\geometry\OperatorInternalRelationUtils.java
@@ -5183,6 +5198,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
     909       9.6     2.4       70.1        89     .\src\main\java\com\esri\core\geometry\QuadTreeImpl.java
      59       8.6     2.6       45.6         5     .\src\main\java\com\esri\core\geometry\RasterizedGeometry2D.java
     446      17.0     3.5      129.2        24     .\src\main\java\com\esri\core\geometry\RasterizedGeometry2DImpl.java
+     51      48.0    16.0      224.0         1     .\src\main\java\com\esri\core\geometry\RefactorExecuteOGC.java
    3883      31.1     7.9      212.7       124     .\src\main\java\com\esri\core\geometry\RelationalOperations.java
    2213      24.5     6.9      170.2        89     .\src\main\java\com\esri\core\geometry\RelationalOperationsMatrix.java
     538      21.9     4.1      145.7        23     .\src\main\java\com\esri\core\geometry\RingOrientationFixer.java
@@ -5231,7 +5247,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
     581      12.1     3.6       63.1        43     .\src\main\java\com\esri\core\geometry\WktParser.java
      78      17.2     5.8      116.0         4     .\src\test\java\com\esri\core\geometry\GeometryUtils.java
      75      12.8     2.8      101.6         5     .\src\test\java\com\esri\core\geometry\RandomCoordinateGenerator.java
-      9       6.0     1.0       37.0         1     .\src\test\java\com\esri\core\geometry\ResultPrinter.java
+     10       7.0     1.0       44.0         1     .\src\test\java\com\esri\core\geometry\ResultPrinter.java
     292      56.2     1.0      900.6         5     .\src\test\java\com\esri\core\geometry\TestAttributes.java
     354      37.7     3.4      405.8         9     .\src\test\java\com\esri\core\geometry\TestBuffer.java
     114       7.5     1.0       67.9        13     .\src\test\java\com\esri\core\geometry\TestCentroid.java
@@ -5285,7 +5301,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      63      10.2     2.0       99.8         5     .\src\test\java\com\esri\core\geometry\TestTreap.java
     129      19.7     1.0      223.7         6     .\src\test\java\com\esri\core\geometry\TestUnion.java
      43      10.0     2.0       61.0         3     .\src\test\java\com\esri\core\geometry\TestWkbImportOnPostgresST.java
-     58       9.0     1.0       77.6         5     .\src\test\java\com\esri\core\geometry\TestWKBSupport.java
+    116      11.1     1.4       88.3         9     .\src\test\java\com\esri\core\geometry\TestWKBSupport.java
      25       8.5     1.0       81.5         2     .\src\test\java\com\esri\core\geometry\TestWkid.java
     735     103.1     1.0      896.7         7     .\src\test\java\com\esri\core\geometry\TestWktParser.java
       6       3.0     1.0        9.0         1     .\src\test\java\com\esri\core\geometry\Utils.java
@@ -5342,7 +5358,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
       88     28    552      3     100 EditShape::filterClosePoints@920-1019@.\src\main\java\com\esri\core\geometry\EditShape.java
      106     22    748      2     152 Envelope2D::clipLine@811-962@.\src\main\java\com\esri\core\geometry\Envelope2D.java
       65     21    269      0      68 Envelope2DIntersectorImpl::next@162-229@.\src\main\java\com\esri\core\geometry\Envelope2DIntersectorImpl.java
-     401     55   3043      9     507 GeoDist::geodesic_distance_ngs@95-601@.\src\main\java\com\esri\core\geometry\GeoDist.java
+     215     32   1874      9     308 GeoDist::geodesic_distance_ngs@172-479@.\src\main\java\com\esri\core\geometry\GeoDist.java
      120     30    748      2     153 IntervalTreeImpl::insertIntervalEnd_@321-473@.\src\main\java\com\esri\core\geometry\IntervalTreeImpl.java
       73     16    541      1      88 IntervalTreeImpl::remove@475-562@.\src\main\java\com\esri\core\geometry\IntervalTreeImpl.java
       85     21    464      1      89 JsonStringWriter::appendQuote_@337-425@.\src\main\java\com\esri\core\geometry\JsonStringWriter.java
@@ -5367,26 +5383,26 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
      202     48   1370      3     253 OperatorExportToWkbLocal::exportPolylineToWKB@375-627@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
      177     38   1198      3     213 OperatorExportToWkbLocal::exportMultiPointToWKB@629-841@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
      144     30    994      3     173 OperatorExportToWkbLocal::exportPointToWKB@843-1015@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
-     279     40   1696      3     324 OperatorExportToWkbLocal::exportEnvelopeToWKB@1017-1340@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
+     128     22    960      3     172 OperatorExportToWkbLocal::exportEnvelopeToWKB@1017-1188@.\src\main\java\com\esri\core\geometry\OperatorExportToWkbLocal.java
       49     26    403      3      59 OperatorExportToWktLocal::exportToWkt@36-94@.\src\main\java\com\esri\core\geometry\OperatorExportToWktLocal.java
       65     18    518      4      72 OperatorGeneralizeCursor::GeneralizePath@77-148@.\src\main\java\com\esri\core\geometry\OperatorGeneralizeCursor.java
-     186     39   1036      1     204 OperatorImportFromESRIShapeCursor::importFromESRIShape@65-268@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
-     322     87   2226      3     422 OperatorImportFromESRIShapeCursor::importFromESRIShapeMultiPath@270-691@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
-     184     46   1238      2     222 OperatorImportFromESRIShapeCursor::importFromESRIShapeMultiPoint@693-914@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
-     123     26    821      2     150 OperatorImportFromESRIShapeCursor::importFromESRIShapePoint@916-1065@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
-     158     29    945      6     298 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importFromGeoJsonImpl@215-512@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     131     32    601      2     162 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::import_coordinates_@524-685@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     120     35    544      2     131 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createGeometry_@877-1007@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     117     20    570      1     133 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::checkPathPointCountsForMultiPath_@1155-1287@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
-     155     46    910      2     230 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importSpatialReferenceFromCrs@1332-1561@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+      68     21    292      1      77 OperatorImportFromESRIShapeCursor::shapeGeneralType@166-242@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+      71     21    320      1      81 OperatorImportFromESRIShapeCursor::shapeModifiers@244-324@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+     322     87   2226      3     422 OperatorImportFromESRIShapeCursor::importFromESRIShapeMultiPath@326-747@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+     184     46   1238      2     222 OperatorImportFromESRIShapeCursor::importFromESRIShapeMultiPoint@749-970@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+     123     26    821      2     150 OperatorImportFromESRIShapeCursor::importFromESRIShapePoint@972-1121@.\src\main\java\com\esri\core\geometry\OperatorImportFromESRIShapeCursor.java
+     158     24    949      6     219 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importFromGeoJsonImpl@223-441@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     131     32    601      2     162 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::import_coordinates_@453-614@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     120     35    544      2     131 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::createGeometry_@806-936@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     117     20    570      1     133 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::checkPathPointCountsForMultiPath_@1084-1216@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
+     155     46    910      2     230 OperatorImportFromGeoJsonLocal::OperatorImportFromGeoJsonHelper::importSpatialReferenceFromCrs@1261-1490@.\src\main\java\com\esri\core\geometry\OperatorImportFromGeoJsonLocal.java
      192    104   1466      2     215 OperatorImportFromJsonCursor::importFromJsonParser@61-275@.\src\main\java\com\esri\core\geometry\OperatorImportFromJsonCursor.java
       64     17    446      3      81 OperatorImportFromJsonCursor::importFromJsonMultiPoint@321-401@.\src\main\java\com\esri\core\geometry\OperatorImportFromJsonCursor.java
      120     36    821      4     148 OperatorImportFromJsonCursor::importFromJsonMultiPath@403-550@.\src\main\java\com\esri\core\geometry\OperatorImportFromJsonCursor.java
-      98     20    596      3     119 OperatorImportFromWkbLocal::executeOGC@78-196@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-     144     73   1272      3     171 OperatorImportFromWkbLocal::importFromWkb@198-368@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-     271     81   1773      5     352 OperatorImportFromWkbLocal::importFromWkbPolygon@370-721@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-     137     28    845      5     182 OperatorImportFromWkbLocal::importFromWkbPolyline@723-904@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
-      76     16    463      4     104 OperatorImportFromWkbLocal::importFromWkbMultiPoint@906-1009@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+     144     73   1272      3     171 OperatorImportFromWkbLocal::importFromWkb@201-371@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+     271     81   1773      5     352 OperatorImportFromWkbLocal::importFromWkbPolygon@373-724@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+     137     28    845      5     182 OperatorImportFromWkbLocal::importFromWkbPolyline@726-907@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
+      76     16    463      4     104 OperatorImportFromWkbLocal::importFromWkbMultiPoint@909-1012@.\src\main\java\com\esri\core\geometry\OperatorImportFromWkbLocal.java
       34     19    285      3      42 OperatorImportFromWktLocal::importFromWkt@88-129@.\src\main\java\com\esri\core\geometry\OperatorImportFromWktLocal.java
       62     25    441      7      85 OperatorImportFromWktLocal::lineStringText@526-610@.\src\main\java\com\esri\core\geometry\OperatorImportFromWktLocal.java
      124     35    894      4     138 OperatorInternalRelationUtils::quickTest2D@48-185@.\src\main\java\com\esri\core\geometry\OperatorInternalRelationUtils.java
@@ -5407,6 +5423,7 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
       57     16    474      3      76 QuadTreeImpl::getIntersectionCount@638-713@.\src\main\java\com\esri\core\geometry\QuadTreeImpl.java
       74     16    686      7      96 QuadTreeImpl::insert_duplicates_@866-961@.\src\main\java\com\esri\core\geometry\QuadTreeImpl.java
       48     16    356      1      56 RasterizedGeometry2DImpl::queryEnvelopeInGeometry@434-489@.\src\main\java\com\esri\core\geometry\RasterizedGeometry2DImpl.java
+      48     16    224      4      51 RefactorExecuteOGC::bCheckConsistentAttributes@5-55@.\src\main\java\com\esri\core\geometry\RefactorExecuteOGC.java
      226     53   1444      5     285 RelationalOperations::relate@42-326@.\src\main\java\com\esri\core\geometry\RelationalOperations.java
       99     17    699      4     125 RelationalOperations::polylineCrossesMultiPoint_@1884-2008@.\src\main\java\com\esri\core\geometry\RelationalOperations.java
       51     16    364      4      66 RelationalOperations::polylineCrossesEnvelope_@2243-2308@.\src\main\java\com\esri\core\geometry\RelationalOperations.java
@@ -5466,4 +5483,4 @@ NLOC    Avg.NLOC  AvgCCN  Avg.token  function_cnt    file
 ==========================================================================================
 Total nloc   Avg.NLOC  AvgCCN  Avg.token   Fun Cnt  Warning cnt   Fun Rt   nloc Rt
 ------------------------------------------------------------------------------------------
-     80307      15.2     3.4      114.2     4957          159      0.03    0.22
+     80226      15.1     3.4      113.9     4972          160      0.03    0.22
