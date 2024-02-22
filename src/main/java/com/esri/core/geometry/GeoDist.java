@@ -101,7 +101,7 @@
 			 double phi1, double lam2, double phi2, PeDouble p_dist,
 			 PeDouble p_az12, PeDouble p_az21, double dlam){
  
-		 System.out.println("antipod");
+		
 		 if (PE_EQ(PE_ABS(phi1), PE_PI2)) {
 			 /* Check if they are at opposite poles */
 			 
@@ -130,7 +130,7 @@
 			 double phi1, double lam2, double phi2, PeDouble p_dist,
 			 PeDouble p_az12, PeDouble p_az21, double dlam){
  
-		 System.out.println("perfect sphere");
+		
 		 double tem1 = 0.0; double tem2 = 0.0;
 		 double sigma = 0.0;
  
