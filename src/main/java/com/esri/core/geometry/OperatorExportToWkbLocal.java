@@ -1016,7 +1016,6 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 
 	private static int exportEnvelopeToWKB(int exportFlags, Envelope envelope,
 			ByteBuffer wkbBuffer) {
-		BranchCover bCover = new BranchCover(20, "exportEnvelopeToWKB");
 		
 		boolean bExportZs = envelope
 				.hasAttribute(VertexDescription.Semantics.Z)
@@ -1035,7 +1034,7 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 		int size = 0;
 		if ((exportFlags & WkbExportFlags.wkbExportMultiPolygon) != 0
 				|| partCount == 0) 
-			size += 1 /* byte order */+ 4 /* wkbType */+ 4 /* numPolygons */; bCover.add(0);
+			size += 1 /* byte order */+ 4 /* wkbType */+ 4 /* numPolygons */; 
 
 		size += partCount
 				* (1 /* byte order */+ 4 /* wkbType */+ 4/* numRings */)
@@ -1045,32 +1044,21 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 																		 */);
 
 		if (bExportZs){
-			bCover.add(1);
 			size += (point_count * 8 /* zs */);}
-		else{
-			bCover.add(2);}
 		if (bExportMs)
-			{bCover.add(3);
+			{
 			size += (point_count * 8 /* ms */);}
-		else
-			{bCover.add(4);}
 		if (size >= NumberUtils.intMax())
-			{bCover.add(5);
+			{
 
-			bCover.saveResults();
 			throw new GeometryException("invalid call");}
-		else
-			{bCover.add(6);}
 		if (wkbBuffer == null)
-			{bCover.add(7);
-				bCover.saveResults();
+			{
+				
 			return size;}
 		else if (wkbBuffer.capacity() < size)
-			{bCover.add(8);
-				bCover.saveResults();
+			{
 			throw new GeometryException("buffer is too small");}
-		else
-			{bCover.add(9);}
 		int offset = 0;
 
 		byte byteOrder = (byte) (wkbBuffer.order() == ByteOrder.LITTLE_ENDIAN ? WkbByteOrder.wkbNDR
@@ -1079,25 +1067,21 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 		// Determine the wkb type
 		int type;
 		if (!bExportZs && !bExportMs) {
-			bCover.add(10);
 			type = WkbGeometryType.wkbPolygon;
 
 			offset = checkFlagsAndAttribute(exportFlags, wkbBuffer, offset, byteOrder, partCount, 0);
 
 		} else if (bExportZs && !bExportMs) {
-			bCover.add(11);
 			type = WkbGeometryType.wkbPolygonZ;
 
 			offset = checkFlagsAndAttribute(exportFlags, wkbBuffer, offset, byteOrder, partCount, 1);
 
 		} else if (bExportMs && !bExportZs) {
-			bCover.add(12);
 			type = WkbGeometryType.wkbPolygonM;
 
 			offset = checkFlagsAndAttribute(exportFlags, wkbBuffer, offset, byteOrder, partCount, 2);
 
 		} else {
-			bCover.add(13);
 			type = WkbGeometryType.wkbPolygonZM;
 
 			offset = checkFlagsAndAttribute(exportFlags, wkbBuffer, offset, byteOrder, partCount, 3);
@@ -1105,12 +1089,8 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 		}
 
 		if (partCount == 0)
-			{bCover.add(14);
-				bCover.saveResults();
+			{
 			return offset;}
-		else {
-			bCover.add(15);
-		}
 
 		// write byte order
 		wkbBuffer.put(offset, byteOrder);
@@ -1133,21 +1113,15 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 
 		Envelope1D z_interval = null;
 		if (bExportZs)
-			{bCover.add(16);
+			{
 			z_interval = envelope.queryInterval(VertexDescription.Semantics.Z,
 					0);}
-		else {
-			bCover.add(17);
-		}
 
 		Envelope1D mInterval = null;
 		if (bExportMs)
-			{bCover.add(18);
+			{
 			mInterval = envelope
 					.queryInterval(VertexDescription.Semantics.M, 0);}
-		else {
-			bCover.add(19);
-		}
 		wkbBuffer.putDouble(offset, env.xmin);
 		offset += 8;
 		wkbBuffer.putDouble(offset, env.ymin);
@@ -1183,7 +1157,6 @@ class OperatorExportToWkbLocal extends OperatorExportToWkb {
 
 		offset = addOffset(offset, bExportZs, bExportMs, wkbBuffer, z_interval, mInterval,0);
 
-		bCover.saveResults();
 		return offset;
 	}
 
