@@ -212,6 +212,13 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
 
     }
 
+    private boolean bitwiseAND(boolean a,boolean b){
+      return a && b;
+    }
+
+    private boolean bitwiseOR(boolean a, boolean b) {
+      return a || b; 
+    }
     MapOGCStructure importFromGeoJsonImpl(
       int importFlags,
       Geometry.Type type,
@@ -356,7 +363,7 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
           }
         } else if (field_name.equals("crs")) {
           bCover.add(32);
-          checkInvalid(b_crs_found || b_crsURN_found,"parsing error");
+          checkInvalid(bitwiseOR(b_crs_found, b_crsURN_found),"parsing error");
 
           b_crs_found = true;
           current_token = json_iterator.nextToken();
@@ -390,14 +397,14 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
       // According to the spec, a GeoJSON object must have both a type and
       // a coordinates array
 
-      checkInvalid(!b_type_found || (!b_geometry_collection && !b_coordinates_found && !skip_coordinates),"parsing error");
+      checkInvalid(bitwiseOR(!b_type_found,bitwiseAND(bitwiseAND(!b_geometry_collection,!b_coordinates_found),!skip_coordinates)),"parsing error");
 
     
 
-      checkInvalid((!b_geometry_collection && b_geometries_found) ||
-      (b_geometry_collection && !b_geometries_found),"parsing error");
+      checkInvalid(bitwiseOR(bitwiseAND(!b_geometry_collection, b_geometries_found),
+      bitwiseAND(b_geometry_collection,!b_geometries_found)),"parsing error");
 
-      if (!skip_coordinates && !b_geometry_collection) {
+      if (bitwiseAND(!skip_coordinates,!b_geometry_collection)) {
         bCover.add(45);
 
         geometry = geo_json_helper.createGeometry_(geo_json_type, type.value());
@@ -410,10 +417,10 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
       }
 
       if (
-        !b_crs_found &&
-        !b_crsURN_found &&
-        ((importFlags & GeoJsonImportFlags.geoJsonImportSkipCRS) == 0) &&
-        ((importFlags & GeoJsonImportFlags.geoJsonImportNoWGS84Default) == 0)
+        bitwiseAND(!b_crs_found ,
+        bitwiseAND(!b_crsURN_found,
+        bitwiseAND(((importFlags & GeoJsonImportFlags.geoJsonImportSkipCRS) == 0),
+        ((importFlags & GeoJsonImportFlags.geoJsonImportNoWGS84Default) == 0))))
       ) {
         bCover.add(47);
 
