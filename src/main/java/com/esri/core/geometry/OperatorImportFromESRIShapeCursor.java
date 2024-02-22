@@ -65,13 +65,18 @@ class OperatorImportFromESRIShapeCursor extends GeometryCursor {
 	private Geometry importFromESRIShape(ByteBuffer shapeBuffer) {
 		ByteOrder initialOrder = shapeBuffer.order();
 		shapeBuffer.order(ByteOrder.LITTLE_ENDIAN);
+		BranchCover bCover = new BranchCover(14, "importFromESRIShape");
 
 		try {
+			bCover.add(0);
+
 			// read type
 			int shapetype = shapeBuffer.getInt(0);
 
 			//null geometry
 			if (shapetype == ShapeType.ShapeNull){
+				bCover.add(1);
+				bCover.saveResults();
 				return null;
 			}
 
@@ -81,35 +86,65 @@ class OperatorImportFromESRIShapeCursor extends GeometryCursor {
 
 			switch (generaltype) {
 			case ShapeType.ShapeGeneralPolygon:
+				bCover.add(2);
 				if (m_type != Geometry.GeometryType.Polygon
-						&& geometryTypeCheck(m_type))
+					
+						&& geometryTypeCheck(m_type)){
+					bCover.add(3);
+					bCover.saveResults();
 					throw new GeometryException("invalid shape type");
+				} else {
+					bCover.add(4);
+				}
+				bCover.saveResults();
 				return importFromESRIShapeMultiPath(true, modifiers,
 						shapeBuffer);
 
 			case ShapeType.ShapeGeneralPolyline:
+				bCover.add(5);
 				if (m_type != Geometry.GeometryType.Polyline
-						&& geometryTypeCheck(m_type))
+						&& geometryTypeCheck(m_type)){
+					bCover.add(6);
+					bCover.saveResults();
 					throw new GeometryException("invalid shape type");
+				} else {
+					bCover.add(7);
+				}
+				bCover.saveResults();	
 				return importFromESRIShapeMultiPath(false, modifiers,
 						shapeBuffer);
 
 			case ShapeType.ShapeGeneralMultiPoint:
+				bCover.add(8);
 				if (m_type != Geometry.GeometryType.MultiPoint
-						&& geometryTypeCheck(m_type))
+						&& geometryTypeCheck(m_type)){
+					bCover.add(9);
+					bCover.saveResults();
 					throw new GeometryException("invalid shape type");
+				} else{
+					bCover.add(10);
+				}
+				bCover.saveResults();	
 				return importFromESRIShapeMultiPoint(modifiers, shapeBuffer);
 
 			case ShapeType.ShapeGeneralPoint:
+				bCover.add(11);
 				if (m_type != Geometry.GeometryType.Point
 						&& m_type != Geometry.GeometryType.MultiPoint
-						&& geometryTypeCheck(m_type))
+						&& geometryTypeCheck(m_type)){
+					bCover.add(12);
+					bCover.saveResults();
 					throw new GeometryException("invalid shape type");
+				} else {
+					bCover.add(13);
+				}
+				bCover.saveResults();
 				return importFromESRIShapePoint(modifiers, shapeBuffer);
 			}
-
+			bCover.saveResults();
 			return null;
 		} finally {
+			bCover.saveResults();
 			shapeBuffer.order(initialOrder);
 		}
 	}
