@@ -228,7 +228,6 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
       boolean skip_coordinates,
       int recursion
     ) throws JsonGeometryException {
-      BranchCover bCover = new BranchCover(49, "importFromGeoJsonImpl");
 
       OperatorImportFromGeoJsonHelper geo_json_helper = this;
       boolean b_type_found = false;
@@ -251,10 +250,8 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
         JsonReader.Token.END_OBJECT
       ) {
         field_name = json_iterator.currentString();
-        bCover.add(0);
         
         if (field_name.equals("type")) {
-          bCover.add(1);
           checkInvalid(b_type_found, "parsing error");
 
           b_type_found = true;
@@ -265,35 +262,27 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
           String s = json_iterator.currentString();
           try {
             geo_json_type = GeoJsonType.valueOf(s);
-            bCover.add(6);
           } catch (Exception ex) {
-            bCover.add(7);
-            bCover.saveResults();
             throw new JsonGeometryException(s);
           }
 
           if (geo_json_type == GeoJsonType.GeometryCollection) {
-            bCover.add(8);
             checkIsUnknownShape(type);
             b_geometry_collection = true;
           } else {
-            bCover.add(11);
           }
 
         } else if (field_name.equals("geometries")) {
           b_geometries_found = true;
-          bCover.add(12);
           checkIsUnknownShape(type);
           
 
           checkInvalid(recursion > 10,"deep geojson");
           
           if (skip_coordinates) {
-            bCover.add(17);
 
             json_iterator.skipChildren();
           } else {
-            bCover.add(18);
             current_token = json_iterator.nextToken();
 
             ms.m_ogcStructure = new OGCStructure();
@@ -301,11 +290,9 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
             ms.m_ogcStructure.m_structures = new ArrayList<OGCStructure>(0);
 
             if (current_token == JsonReader.Token.START_ARRAY) {
-              bCover.add(19);
 
               current_token = json_iterator.nextToken();
               while (current_token != JsonReader.Token.END_ARRAY) {
-                bCover.add(20);
 
                 MapOGCStructure child = importFromGeoJson(
                   importFlags | GeoJsonImportFlags.geoJsonImportSkipCRS,
@@ -326,7 +313,6 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
             
           }
         } else if (field_name.equals("coordinates")) {
-          bCover.add(23);
 
 
           checkInvalid(b_coordinates_found,"parsing error");
@@ -336,20 +322,17 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
           current_token = json_iterator.nextToken();
 
           if (skip_coordinates) {
-            bCover.add(26);
 
             json_iterator.skipChildren();
           } else { // According to the spec, the value of the
             // coordinates must be an array. However, I do an
             // extra check for null too.
-            bCover.add(27);
 
             
            
             
 
             if (current_token != JsonReader.Token.VALUE_NULL) {
-              bCover.add(28);
               checkInvalid(current_token, JsonReader.Token.START_ARRAY);
 
     
@@ -359,11 +342,9 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
                 progress_tracker
               );
             } else {
-              bCover.add(31);
             }
           }
         } else if (field_name.equals("crs")) {
-          bCover.add(32);
           checkInvalid(b_crs_found || b_crsURN_found,"parsing error");
 
           b_crs_found = true;
@@ -372,13 +353,10 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
           if ((importFlags & GeoJsonImportFlags.geoJsonImportSkipCRS) == 0) {
             spatial_reference =
               importSpatialReferenceFromCrs(json_iterator, progress_tracker);
-            bCover.add(35);
           } else {
             json_iterator.skipChildren();
-            bCover.add(36);
           }
         } else if (field_name.equals("crsURN")) {
-          bCover.add(37);
         
           checkInvalid(b_crs_found || b_crsURN_found,"parsing error");
          
@@ -389,7 +367,6 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
           spatial_reference =
             importSpatialReferenceFromCrsUrn_(json_iterator, progress_tracker);
         } else {
-          bCover.add(40);
           json_iterator.nextToken();
           json_iterator.skipChildren();
         }
@@ -406,7 +383,6 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
       (b_geometry_collection && !b_geometries_found),"parsing error");
 
       if (!skip_coordinates && !b_geometry_collection) {
-        bCover.add(45);
 
         geometry = geo_json_helper.createGeometry_(geo_json_type, type.value());
 
@@ -414,7 +390,6 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
         ms.m_ogcStructure.m_type = m_ogcType;
         ms.m_ogcStructure.m_geometry = geometry;
       } else {
-        bCover.add(46);
       }
 
       if (ANDs(
@@ -423,7 +398,6 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
         ((importFlags & GeoJsonImportFlags.geoJsonImportSkipCRS) == 0) ,
         ((importFlags & GeoJsonImportFlags.geoJsonImportNoWGS84Default) == 0))
       ) {
-        bCover.add(47);
 
         spatial_reference = SpatialReference.create(4326); // the spec
         // gives a
@@ -432,11 +406,9 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
         // if no crs
         // is given
       } else {
-        bCover.add(48);
       }
 
       ms.m_spatialReference = spatial_reference;
-      bCover.saveResults();
       return ms;
     }
 
