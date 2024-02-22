@@ -209,8 +209,16 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
         throw new JsonGeometryException("parsing error");
       }
       return true;
-
+ 
     }
+    boolean ANDs(boolean a,boolean b, boolean c, boolean d){
+      return a && b && c && d;
+    }
+    boolean ANDs(boolean a,boolean b, boolean c){
+      return a && b && c;
+    }
+
+
 
     MapOGCStructure importFromGeoJsonImpl(
       int importFlags,
@@ -390,7 +398,7 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
       // According to the spec, a GeoJSON object must have both a type and
       // a coordinates array
 
-      checkInvalid(!b_type_found || (!b_geometry_collection && !b_coordinates_found && !skip_coordinates),"parsing error");
+      checkInvalid(!b_type_found || ANDs(!b_geometry_collection, !b_coordinates_found, !skip_coordinates),"parsing error");
 
     
 
@@ -409,11 +417,11 @@ class OperatorImportFromGeoJsonLocal extends OperatorImportFromGeoJson {
         bCover.add(46);
       }
 
-      if (
-        !b_crs_found &&
-        !b_crsURN_found &&
-        ((importFlags & GeoJsonImportFlags.geoJsonImportSkipCRS) == 0) &&
-        ((importFlags & GeoJsonImportFlags.geoJsonImportNoWGS84Default) == 0)
+      if (ANDs(
+        !b_crs_found,
+        !b_crsURN_found ,
+        ((importFlags & GeoJsonImportFlags.geoJsonImportSkipCRS) == 0) ,
+        ((importFlags & GeoJsonImportFlags.geoJsonImportNoWGS84Default) == 0))
       ) {
         bCover.add(47);
 
