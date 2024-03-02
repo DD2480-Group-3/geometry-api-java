@@ -91,6 +91,7 @@ public class Geohash {
     double[] lonRange = new double[] { -180, 180 };
     double lat = pt.x;
     double lon = pt.y;
+
     String latBitStr = convertToBinary(lat, latRange, precision);
     String lonBitStr = convertToBinary(lon, lonRange, precision);
 
@@ -103,7 +104,13 @@ public class Geohash {
     return binaryToBase32(interwovenBin.toString());
   }
 
-  static String binaryToBase32(String binStr) {
+  /**
+   * Computes the base32 value of the binary string given
+   * @param binStr Binary string with "0" || "1" that is to be converted to a base32 string
+   * @return base32 string of the binStr in chunks of 5 binary digits
+   */
+
+  public static String binaryToBase32(String binStr) {
     StringBuilder base32Str = new StringBuilder();
     for (int i = 0; i < binStr.length(); i += 5) {
       String chunk = binStr.substring(i, i + 5);
@@ -113,7 +120,19 @@ public class Geohash {
     return base32Str.toString();
   }
 
-  static String convertToBinary(double value, double[] range, int precision) {
+  /**
+   * Converts the value given to a binary string with the given precision and range
+   * @param value The value to be converted to a binString
+   * @param range The range at which the value is to be compared with
+   * @param precision The Precision (number of bits) that the binary string needs
+   * @return A binary string representation of the value with the given range and precision
+   */
+
+  public static String convertToBinary(
+    double value,
+    double[] range,
+    int precision
+  ) {
     StringBuilder binString = new StringBuilder();
     for (int i = 0; i < precision; i++) {
       double mid = (range[0] + range[1]) / 2;
