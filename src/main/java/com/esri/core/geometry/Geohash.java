@@ -86,22 +86,36 @@ public class Geohash {
    * @return The geohash of containing pt as a String
    */
   public static String toGeohash(Point2D pt, int characterLength) {
-    int precision = characterLength;
-    double[] latRange = new double[] { -90, 90 };
-    double[] lonRange = new double[] { -180, 180 };
+    if (characterLength < 1) {
+      throw new InvalidParameterException(
+        "CharacterLength cannot be less than 1"
+      );
+    }
+    int precision = characterLength * 5;
     double lat = pt.x;
     double lon = pt.y;
 
-    String latBitStr = convertToBinary(lat, latRange, precision);
-    String lonBitStr = convertToBinary(lon, lonRange, precision);
+    String latBitStr = Geohash.convertToBinary(
+      lat,
+      new double[] { -90, 90 },
+      precision
+    );
+
+    String lonBitStr = Geohash.convertToBinary(
+      lon,
+      new double[] { -180, 180 },
+      precision
+    );
 
     StringBuilder interwovenBin = new StringBuilder();
-    for (int i = 0; i < precision; i++) {
-      interwovenBin.append(latBitStr.charAt(i));
+    for (int i = 0; i < latBitStr.length(); i++) {
       interwovenBin.append(lonBitStr.charAt(i));
+      interwovenBin.append(latBitStr.charAt(i));
     }
 
-    return binaryToBase32(interwovenBin.toString());
+    return Geohash
+      .binaryToBase32(interwovenBin.toString())
+      .substring(0, characterLength);
   }
 
   /**
@@ -123,25 +137,25 @@ public class Geohash {
   /**
    * Converts the value given to a binary string with the given precision and range
    * @param value The value to be converted to a binString
-   * @param range The range at which the value is to be compared with
+   * @param r The range at which the value is to be compared with
    * @param precision The Precision (number of bits) that the binary string needs
    * @return A binary string representation of the value with the given range and precision
    */
 
   public static String convertToBinary(
     double value,
-    double[] range,
+    double[] r,
     int precision
   ) {
     StringBuilder binString = new StringBuilder();
     for (int i = 0; i < precision; i++) {
-      double mid = (range[0] + range[1]) / 2;
+      double mid = (r[0] + r[1]) / 2;
       if (value >= mid) {
         binString.append("1");
-        range[0] = mid;
+        r[0] = mid;
       } else {
         binString.append("0");
-        range[1] = mid;
+        r[1] = mid;
       }
     }
     return binString.toString();

@@ -85,16 +85,31 @@ public class TestGeohash {
   public void testConvertToBinary() {
     double lat = 40.7128;
     double lon = -74.0060;
-    assertEquals(
-      "1011100111",
-      Geohash.convertToBinary(lat, new double[] { -90, 90 }, 10)
+    String latStr = Geohash.convertToBinary(lat, new double[] { -90, 90 }, 10);
+    String lonStr = Geohash.convertToBinary(
+      lon,
+      new double[] { -180, 180 },
+      10
     );
-    assertEquals(
-      "0100101101",
-      Geohash.convertToBinary(lon, new double[] { -180, 180 }, 10)
-    );
+
+    assertEquals("1011100111", latStr);
+    assertEquals("0100101101", lonStr);
   }
 
   @Test
-  public void testToGeoHash() {}
+  public void testToGeoHash() {
+    Point2D p1 = new Point2D(48.669, -4.329);
+    Point2D p2 = new Point2D(70.273, -30.382);
+    Point2D p3 = new Point2D(37.691, 14.276);
+
+    int chrLen = 5;
+
+    String p1Hash = Geohash.toGeohash(p1, chrLen);
+    String p2Hash = Geohash.toGeohash(p2, chrLen);
+    String p3Hash = Geohash.toGeohash(p3, chrLen);
+
+    assertEquals("gbsuv", p1Hash);
+    assertEquals("gk6ru", p2Hash);
+    assertEquals("sqdnk", p3Hash);
+  }
 }
