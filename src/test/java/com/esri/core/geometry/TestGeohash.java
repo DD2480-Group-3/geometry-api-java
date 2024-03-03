@@ -98,9 +98,9 @@ public class TestGeohash {
 
   @Test
   public void testToGeoHash() {
-    Point2D p1 = new Point2D(48.669, -4.329);
-    Point2D p2 = new Point2D(70.273, -30.382);
-    Point2D p3 = new Point2D(37.691, 14.276);
+    Point2D p1 = new Point2D(-4.329,48.669);
+    Point2D p2 = new Point2D(-30.382, 70.273);
+    Point2D p3 = new Point2D(14.276, 37.691);
 
     int chrLen = 5;
 
@@ -125,6 +125,24 @@ public class TestGeohash {
         String geoHash = Geohash.toGeohash(point, 5);
 
         assertEquals(expected, geoHash);
+    }
+
+    @Test
+    public void testContainingGeohashWithHugeValues(){
+        Envelope2D envelope = new Envelope2D(-179, -89, 179, 89);
+        assertEquals("", Geohash.containingGeohash(envelope));
+    }
+
+    @Test
+    public void testContainingGeohash(){
+        Envelope2D envelope = new Envelope2D(-179, -89, -140, -50);
+        assertEquals("0", Geohash.containingGeohash(envelope));
+    }
+
+    @Test
+    public void testContainingGeohash2(){
+        Envelope2D envelope = new Envelope2D(18.078, 59.3564, 18.1,59.3344);
+        assertEquals("u6sce", Geohash.containingGeohash(envelope));
     }
 
 }
