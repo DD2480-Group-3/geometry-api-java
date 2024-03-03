@@ -167,7 +167,39 @@ public class Geohash {
    * @return the geohash as a string
    */
   public static String containingGeohash(Envelope2D envelope) {
-    return "";
+    double posMinX = envelope.xmin + 180;
+    double posMaxX = envelope.xmax + 180;
+    double posMinY = envelope.ymin + 90;
+    double posMaxY = envelope.ymax + 90;
+    int chars = 0;
+    double xmin = 0;
+    double xmax = 0;
+    double ymin = 0;
+    double ymax = 0;
+    double deltaLon = 360;
+    double deltaLat = 180;
+
+    while(xmin == xmax && ymin == ymax && chars < 25){
+
+      if(chars%2 == 0){
+        deltaLon = deltaLon / 8;
+        deltaLat = deltaLat / 4;
+      }else{
+        deltaLon = deltaLon / 4;
+        deltaLat = deltaLat / 8;
+      }
+
+      xmin = Math.floor(posMinX/deltaLon);
+      xmax = Math.floor(posMaxX/deltaLon);
+      ymin = Math.floor(posMinY/deltaLat);
+      ymax = Math.floor(posMaxY/deltaLat);
+
+      chars++;
+    }
+
+    if(chars == 1) return "";
+    
+    return toGeohash(new Point2D(envelope.xmin, envelope.ymin), chars-1);
   }
 
   /**
