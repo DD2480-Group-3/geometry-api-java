@@ -124,7 +124,7 @@ public class Geohash {
    * @return base32 string of the binStr in chunks of 5 binary digits
    */
 
-  public static String binaryToBase32(String binStr) {
+  private static String binaryToBase32(String binStr) {
     StringBuilder base32Str = new StringBuilder();
     for (int i = 0; i < binStr.length(); i += 5) {
       String chunk = binStr.substring(i, i + 5);
@@ -142,7 +142,7 @@ public class Geohash {
    * @return A binary string representation of the value with the given range and precision
    */
 
-  public static String convertToBinary(
+  private static String convertToBinary(
     double value,
     double[] r,
     int precision
@@ -179,27 +179,26 @@ public class Geohash {
     double deltaLon = 360;
     double deltaLat = 180;
 
-    while(xmin == xmax && ymin == ymax && chars < 25){
-
-      if(chars%2 == 0){
+    while (xmin == xmax && ymin == ymax && chars < 25) {
+      if (chars % 2 == 0) {
         deltaLon = deltaLon / 8;
         deltaLat = deltaLat / 4;
-      }else{
+      } else {
         deltaLon = deltaLon / 4;
         deltaLat = deltaLat / 8;
       }
 
-      xmin = Math.floor(posMinX/deltaLon);
-      xmax = Math.floor(posMaxX/deltaLon);
-      ymin = Math.floor(posMinY/deltaLat);
-      ymax = Math.floor(posMaxY/deltaLat);
+      xmin = Math.floor(posMinX / deltaLon);
+      xmax = Math.floor(posMaxX / deltaLon);
+      ymin = Math.floor(posMinY / deltaLat);
+      ymax = Math.floor(posMaxY / deltaLat);
 
       chars++;
     }
 
-    if(chars == 1) return "";
-    
-    return toGeohash(new Point2D(envelope.xmin, envelope.ymin), chars-1);
+    if (chars == 1) return "";
+
+    return toGeohash(new Point2D(envelope.xmin, envelope.ymin), chars - 1);
   }
 
   /**
