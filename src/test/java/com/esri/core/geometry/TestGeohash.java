@@ -144,5 +144,6 @@ public class TestGeohash {
         Envelope2D envelope = new Envelope2D(18.078, 59.3564, 18.1,59.3344);
         assertEquals("u6sce", Geohash.containingGeohash(envelope));
     }
+    
 
 }
