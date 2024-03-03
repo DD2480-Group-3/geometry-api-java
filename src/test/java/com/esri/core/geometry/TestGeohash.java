@@ -72,4 +72,19 @@ public class TestGeohash {
         assertEquals(latDiff, env.ymax-env.ymin, delta);
     }
 
+    @Test
+    public void testToGeohashHasGoodPrecision(){
+        Point2D point = new Point2D(18.068581, 59.329323);
+        assertEquals(6, Geohash.toGeohash(point, 6).length());
+    }
+
+    @Test
+    public void testToGeohash(){
+        String expected = "u6sce";
+        Point2D point = new Point2D(18.068581, 59.329323);
+        String geoHash = Geohash.toGeohash(point, 5);
+
+        assertEquals(expected, geoHash);
+    }
+
 }
