@@ -126,18 +126,13 @@ public class Geohash {
 
   /**
    * Computes the base32 value of the binary string given
-   * @param binStr (long) Binary string with "0" || "1" that is to be converted to a base32 string
-   * @param len (int) number of significant bits
+   * @param binStr (long) Binary number that is to be converted to a base32 string
+   * @param len (int) number of bits
    * @return base32 string of the binStr in chunks of 5 binary digits
    */
 
   private static String binaryToBase32(long binStr, int len) {
     StringBuilder base32Str = new StringBuilder();
-    // for (int i = 0; i < binStr.length(); i += 5) {
-    //   String chunk = binStr.substring(i, i + 5);
-    //   int decVal = Integer.valueOf(chunk, 2);
-    //   base32Str.append(base32.charAt(decVal));
-    // }
 
     for (int i = len - 5; i >= 0; i -= 5) {
       // Extract a group of 5 bits
@@ -152,10 +147,10 @@ public class Geohash {
 
   /**
    * Converts the value given to a binary string with the given precision and range
-   * @param value (double) The value to be converted to a binString
+   * @param value (double) The value to be converted to a binary number
    * @param r (double[]) The range at which the value is to be compared with
-   * @param precision (int) The Precision (number of bits) that the binary string needs
-   * @return (String) A binary string representation of the value with the given range and precision
+   * @param precision (int) The Precision (number of bits) that the binary number needs
+   * @return (String) A binary number representation of the value with the given range and precision
    */
 
   private static long convertToBinary(double value, double[] r, int precision) {
