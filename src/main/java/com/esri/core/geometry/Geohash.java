@@ -187,7 +187,7 @@ public class Geohash {
     double deltaLon = 360;
     double deltaLat = 180;
 
-    while (xmin == xmax && ymin == ymax && chars < 25) {
+    while (xmin == xmax && ymin == ymax && chars < 7) {
       if (chars % 2 == 0) {
         deltaLon = deltaLon / 8;
         deltaLat = deltaLat / 4;
@@ -215,6 +215,38 @@ public class Geohash {
    * @return up to four geohashes that completely cover given envelope
    */
   public static String[] coveringGeohash(Envelope2D envelope) {
-    return new String[] {};
+    double xmin = envelope.xmin;
+    double ymin = envelope.ymin;
+    double xmax = envelope.xmax;
+    double ymax = envelope.ymax;
+
+    if (NumberUtils.isNaN(xmax)) {
+      return new String[] {""};
+    }
+    String[] geoHash = {containingGeohash(envelope)};
+    if (geoHash[0] != ""){
+      return geoHash;
+    }
+
+    int grid = 45;
+    int gridMaxLon = (int)Math.floor(xmax/grid);
+    int gridMinLon = (int)Math.floor(xmin/grid);
+    int gridMaxLat = (int)Math.floor(ymax/grid);
+    int gridMinLat = (int)Math.floor(ymin/grid);
+    int deltaLon = gridMaxLon - gridMinLon + 1;
+    int deltaLat = gridMaxLat - gridMinLat + 1;
+    String[] geoHashes = new String[deltaLon * deltaLat];
+
+    if (deltaLon * deltaLat > 4){
+      return new String[] {""};
+    } else {
+      for (int i = 0; i < deltaLon; i++){
+        for (int j = 0; j < deltaLat; j++){
+          Point2D p = new Point2D(xmin + i * grid, ymin + j * grid);
+          geoHashes[i*deltaLat + j] = toGeohash(p, 1);
+        }
+      }
+    }
+    return geoHashes;
   }
 }
