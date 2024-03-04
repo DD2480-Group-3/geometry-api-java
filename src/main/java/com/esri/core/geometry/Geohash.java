@@ -91,74 +91,87 @@ public class Geohash {
         "CharacterLength cannot be less than 1"
       );
     }
+    if (characterLength > 6) {
+      throw new InvalidParameterException("Max characterLength of 6");
+    }
     int precision = characterLength * 5;
     double lat = pt.y;
     double lon = pt.x;
-
-    String latBitStr = Geohash.convertToBinary(
+    long latBit = Geohash.convertToBinary(
       lat,
       new double[] { -90, 90 },
       precision
     );
 
-    String lonBitStr = Geohash.convertToBinary(
+    long lonBit = Geohash.convertToBinary(
       lon,
       new double[] { -180, 180 },
       precision
     );
 
-    StringBuilder interwovenBin = new StringBuilder();
-    for (int i = 0; i < latBitStr.length(); i++) {
-      interwovenBin.append(lonBitStr.charAt(i));
-      interwovenBin.append(latBitStr.charAt(i));
+    long interwovenBin = 1;
+    for (int i = precision - 1; i >= 0; i--) {
+      long currLon = (lonBit >>> i) & 1;
+      long currLat = (latBit >>> i) & 1;
+      interwovenBin <<= 1;
+      interwovenBin |= currLon;
+      interwovenBin <<= 1;
+      interwovenBin |= currLat;
     }
 
     return Geohash
-      .binaryToBase32(interwovenBin.toString())
+      .binaryToBase32(interwovenBin, precision * 2)
       .substring(0, characterLength);
   }
 
   /**
    * Computes the base32 value of the binary string given
-   * @param binStr Binary string with "0" || "1" that is to be converted to a base32 string
+   * @param binStr (long) Binary string with "0" || "1" that is to be converted to a base32 string
+   * @param len (int) number of significant bits
    * @return base32 string of the binStr in chunks of 5 binary digits
    */
 
-  private static String binaryToBase32(String binStr) {
+  private static String binaryToBase32(long binStr, int len) {
     StringBuilder base32Str = new StringBuilder();
-    for (int i = 0; i < binStr.length(); i += 5) {
-      String chunk = binStr.substring(i, i + 5);
-      int decVal = Integer.valueOf(chunk, 2);
-      base32Str.append(base32.charAt(decVal));
+    // for (int i = 0; i < binStr.length(); i += 5) {
+    //   String chunk = binStr.substring(i, i + 5);
+    //   int decVal = Integer.valueOf(chunk, 2);
+    //   base32Str.append(base32.charAt(decVal));
+    // }
+
+    for (int i = len - 5; i >= 0; i -= 5) {
+      // Extract a group of 5 bits
+      int group = (int) (binStr >>> i) & 0x1F;
+
+      // Use the extracted group as an index to fetch the corresponding base32 character
+      base32Str.append(base32.charAt(group));
     }
+
     return base32Str.toString();
   }
 
   /**
    * Converts the value given to a binary string with the given precision and range
-   * @param value The value to be converted to a binString
-   * @param r The range at which the value is to be compared with
-   * @param precision The Precision (number of bits) that the binary string needs
-   * @return A binary string representation of the value with the given range and precision
+   * @param value (double) The value to be converted to a binString
+   * @param r (double[]) The range at which the value is to be compared with
+   * @param precision (int) The Precision (number of bits) that the binary string needs
+   * @return (String) A binary string representation of the value with the given range and precision
    */
 
-  private static String convertToBinary(
-    double value,
-    double[] r,
-    int precision
-  ) {
-    StringBuilder binString = new StringBuilder();
+  private static long convertToBinary(double value, double[] r, int precision) {
+    int binVal = 1;
     for (int i = 0; i < precision; i++) {
       double mid = (r[0] + r[1]) / 2;
       if (value >= mid) {
-        binString.append("1");
+        binVal = binVal << 1;
+        binVal = binVal | 1;
         r[0] = mid;
       } else {
-        binString.append("0");
+        binVal = binVal << 1;
         r[1] = mid;
       }
     }
-    return binString.toString();
+    return binVal;
   }
 
   /**

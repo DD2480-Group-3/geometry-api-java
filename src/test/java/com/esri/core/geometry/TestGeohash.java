@@ -74,22 +74,30 @@ public class TestGeohash {
 
   @Test
   public void testToGeoHash() {
+    Point2D p0 = new Point2D(0, 0);
+
     Point2D p1 = new Point2D(-4.329, 48.669);
     Point2D p2 = new Point2D(-30.382, 70.273);
     Point2D p3 = new Point2D(14.276, 37.691);
     Point2D p4 = new Point2D(-143.923, 48.669);
+    Point2D p5 = new Point2D(-143.923, 48.669);
 
     int chrLen = 5;
+
+    String p0Hash = Geohash.toGeohash(p0, 1);
 
     String p1Hash = Geohash.toGeohash(p1, chrLen);
     String p2Hash = Geohash.toGeohash(p2, chrLen);
     String p3Hash = Geohash.toGeohash(p3, chrLen);
     String p4Hash = Geohash.toGeohash(p4, chrLen);
+    String p5Hash = Geohash.toGeohash(p5, 6);
 
+    assertEquals("s", p0Hash);
     assertEquals("gbsuv", p1Hash);
     assertEquals("gk6ru", p2Hash);
     assertEquals("sqdnk", p3Hash);
     assertEquals("bb9su", p4Hash);
+    assertEquals("bb9sug", p5Hash);
   }
 
   @Test
