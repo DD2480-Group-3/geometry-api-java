@@ -53,10 +53,12 @@ public class Geohash {
     int lonBitsSize = (int) Math.ceil(geoHash.length() * 5 / 2.0);
     int latBitsSize = geoHash.length() * 5 - lonBitsSize;
 
+    long one = 1;
+
     double lat = -90;
     double latPrecision = 90;
     for (int i = 0; i < latBitsSize; i++) {
-      if (((1 << (latBitsSize - 1 - i)) & latBits) != 0) {
+      if (((one << (latBitsSize - 1 - i)) & latBits) != 0) {
         lat += latPrecision;
       }
       latPrecision /= 2;
@@ -65,7 +67,7 @@ public class Geohash {
     double lon = -180;
     double lonPrecision = 180;
     for (int i = 0; i < lonBitsSize; i++) {
-      if (((1 << (lonBitsSize - 1 - i)) & lonBits) != 0) {
+      if (((one << (lonBitsSize - 1 - i)) & lonBits) != 0) {
         lon += lonPrecision;
       }
       lonPrecision /= 2;
