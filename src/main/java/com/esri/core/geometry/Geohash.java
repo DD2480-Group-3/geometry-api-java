@@ -93,74 +93,82 @@ public class Geohash {
         "CharacterLength cannot be less than 1"
       );
     }
+    if (characterLength > 6) {
+      throw new InvalidParameterException("Max characterLength of 6");
+    }
     int precision = characterLength * 5;
     double lat = pt.y;
     double lon = pt.x;
-
-    String latBitStr = Geohash.convertToBinary(
+    long latBit = Geohash.convertToBinary(
       lat,
       new double[] { -90, 90 },
       precision
     );
 
-    String lonBitStr = Geohash.convertToBinary(
+    long lonBit = Geohash.convertToBinary(
       lon,
       new double[] { -180, 180 },
       precision
     );
 
-    StringBuilder interwovenBin = new StringBuilder();
-    for (int i = 0; i < latBitStr.length(); i++) {
-      interwovenBin.append(lonBitStr.charAt(i));
-      interwovenBin.append(latBitStr.charAt(i));
+    long interwovenBin = 1;
+    for (int i = precision - 1; i >= 0; i--) {
+      long currLon = (lonBit >>> i) & 1;
+      long currLat = (latBit >>> i) & 1;
+      interwovenBin <<= 1;
+      interwovenBin |= currLon;
+      interwovenBin <<= 1;
+      interwovenBin |= currLat;
     }
 
     return Geohash
-      .binaryToBase32(interwovenBin.toString())
+      .binaryToBase32(interwovenBin, precision * 2)
       .substring(0, characterLength);
   }
 
   /**
    * Computes the base32 value of the binary string given
-   * @param binStr Binary string with "0" || "1" that is to be converted to a base32 string
+   * @param binStr (long) Binary number that is to be converted to a base32 string
+   * @param len (int) number of bits
    * @return base32 string of the binStr in chunks of 5 binary digits
    */
 
-  public static String binaryToBase32(String binStr) {
+  private static String binaryToBase32(long binStr, int len) {
     StringBuilder base32Str = new StringBuilder();
-    for (int i = 0; i < binStr.length(); i += 5) {
-      String chunk = binStr.substring(i, i + 5);
-      int decVal = Integer.valueOf(chunk, 2);
-      base32Str.append(base32.charAt(decVal));
+
+    for (int i = len - 5; i >= 0; i -= 5) {
+      // Extract a group of 5 bits
+      int group = (int) (binStr >>> i) & 0x1F;
+
+      // Use the extracted group as an index to fetch the corresponding base32 character
+      base32Str.append(base32.charAt(group));
     }
+
     return base32Str.toString();
   }
 
   /**
    * Converts the value given to a binary string with the given precision and range
-   * @param value The value to be converted to a binString
-   * @param r The range at which the value is to be compared with
-   * @param precision The Precision (number of bits) that the binary string needs
-   * @return A binary string representation of the value with the given range and precision
+   * @param value (double) The value to be converted to a binary number
+   * @param r (double[]) The range at which the value is to be compared with
+   * @param precision (int) The Precision (number of bits) that the binary number needs
+   * @return (String) A binary number representation of the value with the given range and precision
    */
 
-  public static String convertToBinary(
-    double value,
-    double[] r,
-    int precision
-  ) {
-    StringBuilder binString = new StringBuilder();
+  private static long convertToBinary(double value, double[] r, int precision) {
+    int binVal = 1;
     for (int i = 0; i < precision; i++) {
       double mid = (r[0] + r[1]) / 2;
       if (value >= mid) {
-        binString.append("1");
+        binVal = binVal << 1;
+        binVal = binVal | 1;
         r[0] = mid;
       } else {
-        binString.append("0");
+        binVal = binVal << 1;
         r[1] = mid;
       }
     }
-    return binString.toString();
+    return binVal;
   }
 
   /**
@@ -181,27 +189,26 @@ public class Geohash {
     double deltaLon = 360;
     double deltaLat = 180;
 
-    while(xmin == xmax && ymin == ymax && chars < 25){
-
-      if(chars%2 == 0){
+    while (xmin == xmax && ymin == ymax && chars < 7) {
+      if (chars % 2 == 0) {
         deltaLon = deltaLon / 8;
         deltaLat = deltaLat / 4;
-      }else{
+      } else {
         deltaLon = deltaLon / 4;
         deltaLat = deltaLat / 8;
       }
 
-      xmin = Math.floor(posMinX/deltaLon);
-      xmax = Math.floor(posMaxX/deltaLon);
-      ymin = Math.floor(posMinY/deltaLat);
-      ymax = Math.floor(posMaxY/deltaLat);
+      xmin = Math.floor(posMinX / deltaLon);
+      xmax = Math.floor(posMaxX / deltaLon);
+      ymin = Math.floor(posMinY / deltaLat);
+      ymax = Math.floor(posMaxY / deltaLat);
 
       chars++;
     }
 
-    if(chars == 1) return "";
-    
-    return toGeohash(new Point2D(envelope.xmin, envelope.ymin), chars-1);
+    if (chars == 1) return "";
+
+    return toGeohash(new Point2D(envelope.xmin, envelope.ymin), chars - 1);
   }
 
   /**
@@ -210,6 +217,38 @@ public class Geohash {
    * @return up to four geohashes that completely cover given envelope
    */
   public static String[] coveringGeohash(Envelope2D envelope) {
-    return new String[] {};
+    double xmin = envelope.xmin;
+    double ymin = envelope.ymin;
+    double xmax = envelope.xmax;
+    double ymax = envelope.ymax;
+
+    if (NumberUtils.isNaN(xmax)) {
+      return new String[] {""};
+    }
+    String[] geoHash = {containingGeohash(envelope)};
+    if (geoHash[0] != ""){
+      return geoHash;
+    }
+
+    int grid = 45;
+    int gridMaxLon = (int)Math.floor(xmax/grid);
+    int gridMinLon = (int)Math.floor(xmin/grid);
+    int gridMaxLat = (int)Math.floor(ymax/grid);
+    int gridMinLat = (int)Math.floor(ymin/grid);
+    int deltaLon = gridMaxLon - gridMinLon + 1;
+    int deltaLat = gridMaxLat - gridMinLat + 1;
+    String[] geoHashes = new String[deltaLon * deltaLat];
+
+    if (deltaLon * deltaLat > 4){
+      return new String[] {""};
+    } else {
+      for (int i = 0; i < deltaLon; i++){
+        for (int j = 0; j < deltaLat; j++){
+          Point2D p = new Point2D(xmin + i * grid, ymin + j * grid);
+          geoHashes[i*deltaLat + j] = toGeohash(p, 1);
+        }
+      }
+    }
+    return geoHashes;
   }
 }
